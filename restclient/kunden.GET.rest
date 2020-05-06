@@ -1,0 +1,52 @@
+###
+### N e t z w e r k   -  V e r b i n d u n g   n o t w e n d i g
+###
+
+@host = localhost:8443
+
+### Suche alle Kunden
+https://{{host}}/kunden
+
+### Suche mit vorhandener Kunde-ID
+https://{{host}}/kunden/00000000-0000-0000-0000-000000000001
+
+### Suche mit vorhandener Kunde-ID und Versionsnummer
+https://{{host}}/kunden/00000000-0000-0000-0000-000000000001
+If-None-Match: "0"
+
+### Suche mit vorhandener Kunde-ID und falscher Versionsnummer
+https://{{host}}/kunden/00000000-0000-0000-0000-000000000001
+If-None-Match: 0
+
+### Suche mit ungueltiger Kunde-ID
+https://{{host}}/kunden/YYYYYYYY-YYYY-YYYY-YYYY-YYYYYYYYYYYY
+
+### Suche mit nicht-vorhandener Kunde-ID
+https://{{host}}/kunden/99999999-9999-9999-9999-999999999999
+
+### Suche mit vorhandenem Titel
+https://{{host}}/kunden?titel=a
+
+### Suche mit vorhandener ISBN
+https://{{host}}/kunden?isbn=978-3897225831
+
+### Suche mit vorhandenen Schlagwoertern
+https://{{host}}/kunden?javascript=true&typescript=true
+
+### Suche mit vorhandenem Schlagwort "JAVASCRIPT"
+https://{{host}}/kunden?javascript=true
+
+### Suche mit vorhandenem Schlagwort "TYPESCRIPT"
+https://{{host}}/kunden?&typescript=true
+
+### Suche mit gueltiger Kundeart
+https://{{host}}/kunden?art=KINDLE
+
+### Suche mit gueltigem Rating
+https://{{host}}/kunden?rating=1
+
+### Suche lieferbare Kunden
+https://{{host}}/kunden?lieferbar=true
+
+### Optionen zu Kunde-ID
+OPTIONS https://{{host}}/kunden/00000000-0000-0000-0000-000000000001

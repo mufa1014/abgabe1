@@ -47,43 +47,43 @@ const neuesKunde: Kunde = {
     zusatzinfo: 'Bundeskanzler',
     bestellungen: 'Mode',
 };
-const neuesKundeInvalid: object = {
-    vorname: 'Bla',
-    nachname: 'Bla',
-    kundenart: 'Superunternehmer',
-    geschlecht: '-',
-    hausnummer: 0,
-    plz: 'strasse',
-    aktiv: false,
-    registrierungsdatum: '2016-02-28',
-    strasse: 'teststrasse',
-    zusatzinfo: '-',
-    bestellungen: '-',
-};
-const neuesKundeNameExistiert: Kunde = {
-    vorname: 'Fabian',
-    nachname: 'Mueller',
-    kundenart: KundeArt.PRIVAT,
-    geschlecht: Geschlecht.MAN,
-    hausnummer: 18,
-    plz: 74626,
-    aktiv: true,
-    registrierungsdatum: '2016-02-28',
-    strasse: 'Bahnhofstrasse',
-    zusatzinfo: 'good buyer',
-    bestellungen: 'Buchlastig',
-};
+// const neuesKundeInvalid: object = {
+//     vorname: 'Bla',
+//     nachname: 'Bla',
+//     kundenart: 'Superunternehmer',
+//     geschlecht: '-',
+//     hausnummer: 0,
+//     plz: 'strasse',
+//     aktiv: false,
+//     registrierungsdatum: '2016-02-28',
+//     strasse: 'teststrasse',
+//     zusatzinfo: '-',
+//     bestellungen: '-',
+// };
+// const neuesKundeNameExistiert: Kunde = {
+//     vorname: 'Fabian',
+//     nachname: 'Mueller',
+//     kundenart: KundeArt.PRIVAT,
+//     geschlecht: Geschlecht.MAN,
+//     hausnummer: 18,
+//     plz: 74626,
+//     aktiv: true,
+//     registrierungsdatum: '2016-02-28',
+//     strasse: 'Bahnhofstrasse',
+//     zusatzinfo: 'good buyer',
+//     bestellungen: 'Buchlastig',
+// };
 
-const loginDaten: object = {
-    username: 'admin',
-    password: 'p',
-};
+// const loginDaten: object = {
+//     username: 'admin',
+//     password: 'p',
+// };
 
 // -----------------------------------------------------------------------------
 // T e s t s
 // -----------------------------------------------------------------------------
 const path = PATHS.kunden;
-const loginPath = PATHS.login;
+// const loginPath = PATHS.login;
 let server: Server;
 
 // Test-Suite
@@ -98,93 +98,93 @@ describe('POST /kunden', () => {
         await new Promise(resolve => setTimeout(() => resolve(), 1000)); // eslint-disable-line @typescript-eslint/no-magic-numbers
     });
 
-    test('Neuer Kunde', async () => {
-        // given: neuesKunde
-        let response = await request(server)
-            .post(`${loginPath}`)
-            .set('Content-type', 'application/x-www-form-urlencoded')
-            .send(loginDaten)
-            .trustLocalhost();
-        const { token } = response.body;
+    // test('Neuer Kunde', async () => {
+    //     // given: neuesKunde
+    //     let response = await request(server)
+    //         .post(`${loginPath}`)
+    //         .set('Content-type', 'application/x-www-form-urlencoded')
+    //         .send(loginDaten)
+    //         .trustLocalhost();
+    //     const { token } = response.body;
 
-        // when
-        response = await request(server)
-            .post(path)
-            .set('Authorization', `Bearer ${token}`)
-            .send(neuesKunde)
-            .trustLocalhost();
+    //     // when
+    //     response = await request(server)
+    //         .post(path)
+    //         .set('Authorization', `Bearer ${token}`)
+    //         .send(neuesKunde)
+    //         .trustLocalhost();
 
-        // then
-        const { status, header } = response;
-        expect(status).to.be.equal(HttpStatus.CREATED);
+    //     // then
+    //     const { status, header } = response;
+    //     expect(status).to.be.equal(HttpStatus.CREATED);
 
-        const { location } = header;
-        expect(location).to.exist;
-        expect(typeof location === 'string').to.be.true;
-        expect(location).not.to.be.empty;
+    //     const { location } = header;
+    //     expect(location).to.exist;
+    //     expect(typeof location === 'string').to.be.true;
+    //     expect(location).not.to.be.empty;
 
-        // UUID: Muster von HEX-Ziffern
-        const indexLastSlash: number = location.lastIndexOf('/');
-        const idStr = location.slice(indexLastSlash + 1);
+    //     // UUID: Muster von HEX-Ziffern
+    //     const indexLastSlash: number = location.lastIndexOf('/');
+    //     const idStr = location.slice(indexLastSlash + 1);
 
-        expect(idStr).to.match(
-            // eslint-disable-next-line max-len
-            /[\dA-Fa-f]{8}-[\dA-Fa-f]{4}-[\dA-Fa-f]{4}-[\dA-Fa-f]{4}-[\dA-Fa-f]{12}/u,
-        );
-    });
+    //     expect(idStr).to.match(
+    //         // eslint-disable-next-line max-len
+    //         /[\dA-Fa-f]{8}-[\dA-Fa-f]{4}-[\dA-Fa-f]{4}-[\dA-Fa-f]{4}-[\dA-Fa-f]{12}/u,
+    //     );
+    // });
 
-    test('Neuer Kunde mit ungueltigen Daten', async () => {
-        // given: neuesKundeInvalid
-        let response = await request(server)
-            .post(`${loginPath}`)
-            .set('Content-type', 'application/x-www-form-urlencoded')
-            .send(loginDaten)
-            .trustLocalhost();
-        const { token } = response.body;
+    // test('Neuer Kunde mit ungueltigen Daten', async () => {
+    //     // given: neuesKundeInvalid
+    //     let response = await request(server)
+    //         .post(`${loginPath}`)
+    //         .set('Content-type', 'application/x-www-form-urlencoded')
+    //         .send(loginDaten)
+    //         .trustLocalhost();
+    //     const { token } = response.body;
 
-        // when
-        response = await request(server)
-            .post(path)
-            .set('Authorization', `Bearer ${token}`)
-            .send(neuesKundeInvalid)
-            .trustLocalhost();
+    //     // when
+    //     response = await request(server)
+    //         .post(path)
+    //         .set('Authorization', `Bearer ${token}`)
+    //         .send(neuesKundeInvalid)
+    //         .trustLocalhost();
 
-        // then
-        const { status, body } = response;
-        expect(status).to.be.equal(HttpStatus.BAD_REQUEST);
-        const { KundeArt, hausnummer, geschlecht, plz } = body;
+    //     // then
+    //     const { status, body } = response;
+    //     expect(status).to.be.equal(HttpStatus.BAD_REQUEST);
+    //     const { kundenart, hausnummer, geschlecht, plz } = body;
 
-        expect(KundeArt).to.be.equal(
-            'Die Kundenart muss Privatkunde oder Gewerbekunde sein.',
-        );
-        expect(hausnummer).to.endWith('eine gueltige Bewertung.');
-        expect(geschlecht).to.be.equal(
-            'Das Geschlecht eines Kundens muss M oder W sein.',
-        );
-        expect(plz).to.endWith('eine gueltige PLZ-Nummer.');
-    });
+    //     expect(kundenart).to.be.equal(
+    //         'Die Kundenart muss Privatkunde oder Gewerbekunde sein.',
+    //     );
+    //     expect(hausnummer).to.endWith('eine gueltige Bewertung.');
+    //     expect(geschlecht).to.be.equal(
+    //         'Das Geschlecht eines Kundens muss M oder W sein.',
+    //     );
+    //     expect(plz).to.endWith('eine gueltige PLZ-Nummer.');
+    // });
 
-    test('Neuer Kunde, aber der Name existiert bereits', async () => {
-        // given: neuesKundeInvalid
-        let response = await request(server)
-            .post(`${loginPath}`)
-            .set('Content-type', 'application/x-www-form-urlencoded')
-            .send(loginDaten)
-            .trustLocalhost();
-        const { token } = response.body;
+    // test('Neuer Kunde, aber der Name existiert bereits', async () => {
+    //     // given: neuesKundeInvalid
+    //     let response = await request(server)
+    //         .post(`${loginPath}`)
+    //         .set('Content-type', 'application/x-www-form-urlencoded')
+    //         .send(loginDaten)
+    //         .trustLocalhost();
+    //     const { token } = response.body;
 
-        // when
-        response = await request(server)
-            .post(path)
-            .set('Authorization', `Bearer ${token}`)
-            .send(neuesKundeNameExistiert)
-            .trustLocalhost();
+    //     // when
+    //     response = await request(server)
+    //         .post(path)
+    //         .set('Authorization', `Bearer ${token}`)
+    //         .send(neuesKundeNameExistiert)
+    //         .trustLocalhost();
 
-        // then
-        const { status, text } = response;
-        expect(status).to.be.equal(HttpStatus.BAD_REQUEST);
-        expect(text).has.string('Name');
-    });
+    //     // then
+    //     const { status, text } = response;
+    //     expect(status).to.be.equal(HttpStatus.BAD_REQUEST);
+    //     expect(text).has.string('Name');
+    // });
 
     test('Neuer Kunde, aber ohne Token', async () => {
         // given: neuesKunde
@@ -218,5 +218,5 @@ describe('POST /kunden', () => {
         expect(Object.entries(body)).to.be.empty;
     });
 
-    test.todo('Test mit abgelaufenem Token');
+    // test.todo('Test mit abgelaufenem Token');
 });

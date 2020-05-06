@@ -1,0 +1,12 @@
+{
+  "vorname": "?!",
+  "nachname": "ah",
+  "kundenart": "UNSICHTBAR",
+  "geschlecht": "NO_GESCHLECHT",
+  "hausnummer": 0,
+  "plz": 0,
+  "aktiv": true,
+  "registrierungsdatum": "2017-02-01T00:00:00.000Z",
+  "strasse": "Test-strasse",
+  "zusatzinfo": "-"
+}

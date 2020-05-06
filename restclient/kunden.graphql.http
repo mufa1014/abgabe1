@@ -4,64 +4,64 @@
 
 @host = localhost:8443
 
-### Suche titel und art von allen Buechern
+### Suche titel und art von allen Kundenn
 POST https://localhost:8443/api
 Content-Type: application/json
 X-REQUEST-TYPE: GraphQL
 
 {
-  buecher {
+  kunden {
     titel
     art
   }
 }
 
-### Suche titel, art und isbn von einem Buch mit vorhandener Buch-ID
+### Suche titel, art und isbn von einem Kunde mit vorhandener Kunde-ID
 POST https://localhost:8443/api
 Content-Type: application/json
 X-REQUEST-TYPE: GraphQL
 
 {
-  buch(id: "00000000-0000-0000-0000-000000000001") {
+  kunde(id: "00000000-0000-0000-0000-000000000001") {
     titel
     art
     isbn
   }
 }
 
-### Suche titel und art von Buechern mit vorhandenem Titel
+### Suche titel und art von Kundenn mit vorhandenem Titel
 POST https://localhost:8443/api
 Content-Type: application/json
 X-REQUEST-TYPE: GraphQL
 
 {
-  buecher(titel: "Alpha") {
+  kunden(titel: "Alpha") {
     titel
     art
   }
 }
 
 
-### Suche titel, art und schlagwoerter von Buechern mit vorhandenem Titel
+### Suche titel, art und schlagwoerter von Kundenn mit vorhandenem Titel
 POST https://localhost:8443/api
 Content-Type: application/json
 X-REQUEST-TYPE: GraphQL
 
 {
-  buecher(titel: "a") {
+  kunden(titel: "a") {
     titel
     art
     schlagwoerter
   }
 }
 
-### Neues Buch anlegen
+### Neues Kunde anlegen
 POST https://localhost:8443/api
 Content-Type: application/json
 X-REQUEST-TYPE: GraphQL
 
 mutation {
-  createBuch(
+  createKunde(
     titel: "Test"
     rating: 1
     art: "KINDLE"
@@ -78,13 +78,13 @@ mutation {
   }
 }
 
-### Vorhandenes Buch aktualisieren
+### Vorhandenes Kunde aktualisieren
 POST https://localhost:8443/api
 Content-Type: application/json
 X-REQUEST-TYPE: GraphQL
 
 mutation {
-  updateBuch(
+  updateKunde(
     _id: "00000000-0000-0000-0000-000000000003",
     titel: "Geaendert",
     rating: 5,
@@ -106,11 +106,11 @@ mutation {
   }
 }
 
-### Vorhandenes Buch loeschen
+### Vorhandenes Kunde loeschen
 POST https://localhost:8443/api
 Content-Type: application/json
 X-REQUEST-TYPE: GraphQL
 
 mutation {
-  deleteBuch(id: "00000000-0000-0000-0000-000000000004")
+  deleteKunde(id: "00000000-0000-0000-0000-000000000004")
 }

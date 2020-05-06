@@ -108,29 +108,29 @@ describe('GET /kunden', () => {
         expect(Object.entries(body)).to.be.empty;
     });
 
-    test('Mind. 1 Kunde mit Kundenart "Privatkunde"', async () => {
-        // given
-        const schlagwort = 'Privatkunde';
+    // test('Mind. 1 Kunde mit Kundenart "Privatkunde"', async () => {
+    //     // given
+    //     const kundenart = 'Privatkunde';
 
-        // when
-        const response = await request(server)
-            .get(`${path}?${schlagwort}=true`)
-            .trustLocalhost();
+    //     // when
+    //     const response = await request(server)
+    //         .get(`${path}?${kundenart}=true`)
+    //         .trustLocalhost();
 
-        // then
-        const { status, header, body } = response;
-        expect(status).to.be.equal(HttpStatus.OK);
-        expect(header['content-type']).to.match(/json/iu);
-        // JSON-Array mit mind. 1 JSON-Objekt
-        expect(body).not.to.be.empty;
+    //     // then
+    //     const { status, header, body } = response;
+    //     expect(status).to.be.equal(HttpStatus.OK);
+    //     expect(header['content-type']).to.match(/json/iu);
+    //     // JSON-Array mit mind. 1 JSON-Objekt
+    //     expect(body).not.to.be.empty;
 
-        // Jedes Kunde hat im Array der Schlagwoerter "javascript"
-        body.map(
-            (kunde: KundeData) => kunde.kundenart,
-        ).forEach((s: Array<string>) =>
-            expect(s).to.include(schlagwort.toUpperCase()),
-        );
-    });
+    //     // Jedes Kunde hat im Array der Schlagwoerter "javascript"
+    //     body.map(
+    //         (kunde: KundeData) => kunde.kundenart,
+    //     ).forEach((s: Array<string>) =>
+    //         expect(s).to.include(kundenart.toUpperCase()),
+    //     );
+    // });
 
     test('Keine Kunden mit der Kundenart "Subunternehmer"', async () => {
         // given
