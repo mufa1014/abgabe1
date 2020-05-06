@@ -19,7 +19,6 @@ import type { Kunde, KundeData } from '../entity/types';
 import { KundeModel, validateKunde } from '../entity';
 import {
     KundeNotExistsError,
-    PlzExistsError,
     ValidationError,
     VersionInvalidError,
     VornameExistsError,
@@ -160,14 +159,6 @@ export class KundeService {
                 new VornameExistsError(
                     `Der Vorname "${vorname}" existiert bereits.`,
                 ),
-            );
-        }
-
-        const { plz } = kundeData;
-        tmp = await KundeModel.findOne({ plz }).lean<KundeData>();
-        if (tmp !== null) {
-            return Promise.reject(
-                new PlzExistsError(`Die PLZ-Nr. "${plz}" existiert bereits.`),
             );
         }
 

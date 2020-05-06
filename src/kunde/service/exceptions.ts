@@ -45,15 +45,6 @@ export class VornameExistsError extends Error {
     }
 }
 
-export class PlzExistsError extends Error {
-    readonly name = 'IsbnExistsError';
-
-    constructor(public readonly message: string) {
-        super();
-        logger.debug(`IsbnExistsError.constructor(): ${message}`);
-    }
-}
-
 export class VersionInvalidError extends Error {
     readonly name = 'VersionInvalidError';
 

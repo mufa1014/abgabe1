@@ -19,7 +19,7 @@ import type { Document } from 'mongoose';
 import { KundeData } from './kunde';
 import validator from 'validator';
 
-const { isUUID, isPostalCode } = validator;
+const { isUUID } = validator;
 
 export interface ValidationErrorMsg {
     id?: string;
@@ -40,7 +40,6 @@ export const validateKunde = (kunde: Document) => {
         kundenart,
         hausnummer,
         geschlecht,
-        plz,
     } = kunde as Document & KundeData;
 
     const kundeDocument = kunde;
@@ -64,7 +63,7 @@ export const validateKunde = (kunde: Document) => {
         err.kundenart =
             'Die Kundenart muss Privatkunde oder Gewerbekunde sein.';
     }
-    if (hausnummer !== undefined && hausnummer !== null) {
+    if (hausnummer === undefined || hausnummer === null) {
         err.hausnummer = 'Ein Kunde muss eine Hausnummer haben.';
     }
     if (geschlecht === undefined || geschlecht === null) {
@@ -72,16 +71,9 @@ export const validateKunde = (kunde: Document) => {
     } else if (geschlecht !== 'M' && geschlecht !== 'W') {
         err.geschlecht = 'Das Geschlecht eines Kundees muss M oder W sein.';
     }
-    if (
-        plz !== undefined &&
-        plz !== null &&
-        (typeof plz !== 'string' || !isPostalCode(plz, 'DE'))
-    ) {
-        err.plz = 'Keine gueltige PLZ.';
-    }
-    // Falls "preis" ein string ist: Pruefung z.B. 12.30
-    // if (isPresent(preis) && !isCurrency(`${preis}`)) {
-    //     err.preis = `${preis} ist kein gueltiger Preis`
+    // Falls "hausnummer" ein string ist: Pruefung z.B. 12.30
+    // if (isPresent(hausnummer) && !isCurrency(`${hausnummer}`)) {
+    //     err.hausnummer = `${hausnummer} ist kein gueltiger Hausnummer`
     // }
     return Object.entries(err).length === 0 ? undefined : err;
 };

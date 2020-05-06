@@ -40,7 +40,7 @@ const neuesKunde: Kunde = {
     kundenart: KundeArt.GEWERBLICH,
     geschlecht: Geschlecht.WOMEN,
     hausnummer: 1,
-    plz: 10119 ,
+    plz: 85747 ,
     aktiv: false,
     registrierungsdatum: '2016-02-28',
     strasse: 'Regierungsstrasse',
@@ -74,16 +74,16 @@ const neuesKunde: Kunde = {
 //     bestellungen: 'Buchlastig',
 // };
 
-// const loginDaten: object = {
-//     username: 'admin',
-//     password: 'p',
-// };
+ const loginDaten: object = {
+     username: 'admin',
+     password: 'p',
+ };
 
 // -----------------------------------------------------------------------------
 // T e s t s
 // -----------------------------------------------------------------------------
 const path = PATHS.kunden;
-// const loginPath = PATHS.login;
+const loginPath = PATHS.login;
 let server: Server;
 
 // Test-Suite
@@ -98,40 +98,40 @@ describe('POST /kunden', () => {
         await new Promise(resolve => setTimeout(() => resolve(), 1000)); // eslint-disable-line @typescript-eslint/no-magic-numbers
     });
 
-    // test('Neuer Kunde', async () => {
-    //     // given: neuesKunde
-    //     let response = await request(server)
-    //         .post(`${loginPath}`)
-    //         .set('Content-type', 'application/x-www-form-urlencoded')
-    //         .send(loginDaten)
-    //         .trustLocalhost();
-    //     const { token } = response.body;
+     test('Neuer Kunde', async () => {
+         // given: neuesKunde
+         let response = await request(server)
+             .post(`${loginPath}`)
+             .set('Content-type', 'application/x-www-form-urlencoded')
+             .send(loginDaten)
+             .trustLocalhost();
+         const { token } = response.body;
 
-    //     // when
-    //     response = await request(server)
-    //         .post(path)
-    //         .set('Authorization', `Bearer ${token}`)
-    //         .send(neuesKunde)
-    //         .trustLocalhost();
+         // when
+         response = await request(server)
+             .post(path)
+             .set('Authorization', `Bearer ${token}`)
+             .send(neuesKunde)
+             .trustLocalhost();
 
-    //     // then
-    //     const { status, header } = response;
-    //     expect(status).to.be.equal(HttpStatus.CREATED);
+         // then
+         const { status, header } = response;
+         expect(status).to.be.equal(HttpStatus.CREATED);
 
-    //     const { location } = header;
-    //     expect(location).to.exist;
-    //     expect(typeof location === 'string').to.be.true;
-    //     expect(location).not.to.be.empty;
+         const { location } = header;
+         expect(location).to.exist;
+         expect(typeof location === 'string').to.be.true;
+         expect(location).not.to.be.empty;
 
-    //     // UUID: Muster von HEX-Ziffern
-    //     const indexLastSlash: number = location.lastIndexOf('/');
-    //     const idStr = location.slice(indexLastSlash + 1);
+         // UUID: Muster von HEX-Ziffern
+         const indexLastSlash: number = location.lastIndexOf('/');
+         const idStr = location.slice(indexLastSlash + 1);
 
-    //     expect(idStr).to.match(
-    //         // eslint-disable-next-line max-len
-    //         /[\dA-Fa-f]{8}-[\dA-Fa-f]{4}-[\dA-Fa-f]{4}-[\dA-Fa-f]{4}-[\dA-Fa-f]{12}/u,
-    //     );
-    // });
+         expect(idStr).to.match(
+             // eslint-disable-next-line max-len
+             /[\dA-Fa-f]{8}-[\dA-Fa-f]{4}-[\dA-Fa-f]{4}-[\dA-Fa-f]{4}-[\dA-Fa-f]{12}/u,
+         );
+     });
 
     // test('Neuer Kunde mit ungueltigen Daten', async () => {
     //     // given: neuesKundeInvalid

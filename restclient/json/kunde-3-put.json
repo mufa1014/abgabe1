@@ -4,10 +4,10 @@
   "kundenart": "Gewerbekunde",
   "geschlecht": "W",
   "hausnummer": 9999,
-  "plz": 74626,
+  "plz": 33452,
   "aktiv": true,
   "registrierungsdatum": "2019-02-01T00:00:00.000Z",
-  "strasse": "Teststrasse",
+  "strasse": "Teeeststrasse",
   "zusatzinfo": "nothing",
   "bestellungen": "viele"
 }

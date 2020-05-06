@@ -20,7 +20,6 @@ import { HttpStatus, getBaseUri, logger, mimeConfig } from '../../shared';
 import {
     KundeNotExistsError,
     KundeService,
-    PlzExistsError,
     ValidationError,
     VersionInvalidError,
     VornameExistsError,
@@ -238,10 +237,7 @@ export class KundeRequestHandler {
             return;
         }
 
-        if (
-            err instanceof VornameExistsError ||
-            err instanceof PlzExistsError
-        ) {
+        if (err instanceof VornameExistsError) {
             const { name, message } = err;
             logger.debug(
                 `KundeRequestHandler.handleCreateError(): err.name=${name}, message=${message}`,
