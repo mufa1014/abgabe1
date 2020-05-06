@@ -4,109 +4,93 @@
 
 @host = localhost:8443
 
-### Suche titel und art von allen Kundenn
+### Suche Vorname, Nachname und KundenKundenart von allen Kundenn
 POST https://localhost:8443/api
 Content-Type: application/json
 X-REQUEST-TYPE: GraphQL
 
 {
   kunden {
-    titel
-    art
+    vorname
+    nachname
+    kundenart
   }
 }
 
-### Suche titel, art und isbn von einem Kunde mit vorhandener Kunde-ID
+### Suche Vorname, Nachname, KundenKundenart und PLZ von einem Kunde mit vorhandener Kunde-ID
 POST https://localhost:8443/api
 Content-Type: application/json
 X-REQUEST-TYPE: GraphQL
 
 {
   kunde(id: "00000000-0000-0000-0000-000000000001") {
-    titel
-    art
-    isbn
+    vorname
+    nachname
+    kundenart
+    plz
   }
 }
 
-### Suche titel und art von Kundenn mit vorhandenem Titel
+### Suche Vorname und Kundenart von Kundenn mit vorhandenem Titel
 POST https://localhost:8443/api
 Content-Type: application/json
 X-REQUEST-TYPE: GraphQL
 
 {
-  kunden(titel: "Alpha") {
-    titel
-    art
+  kunden(vorname: "Fabian") {
+    vorname
+    kundenart
   }
 }
 
-
-### Suche titel, art und schlagwoerter von Kundenn mit vorhandenem Titel
-POST https://localhost:8443/api
-Content-Type: application/json
-X-REQUEST-TYPE: GraphQL
-
-{
-  kunden(titel: "a") {
-    titel
-    art
-    schlagwoerter
-  }
-}
-
-### Neues Kunde anlegen
+### Neuer Kunde anlegen
 POST https://localhost:8443/api
 Content-Type: application/json
 X-REQUEST-TYPE: GraphQL
 
 mutation {
   createKunde(
-    titel: "Test"
-    rating: 1
-    art: "KINDLE"
-    verlag: "IWI_VERLAG"
-    preis: 11.1
-    rabatt: 0.011
-    lieferbar: true
-    datum: null
-    isbn: "3-89722-583-2"
-    homepage: "http://test.de"
-    schlagwoerter: ["JAVASCRIPT"]
+  vorname: "Neuer",
+  nachname: "Kunde",
+  kundenart: "Privatkunde",
+  geschlecht: "M",
+  hausnummer: 99,
+  plz: 73849,
+  aktiv: true,
+  registrierungsdatum: "2019-02-01T00:00:00.000Z",
+  strasse: "Neue Strasse",
+  zusatzinfo: "New Buyer",
   ) {
     _id
   }
 }
 
-### Vorhandenes Kunde aktualisieren
+### Vorhandener Kunde aktualisieren
 POST https://localhost:8443/api
 Content-Type: application/json
 X-REQUEST-TYPE: GraphQL
 
 mutation {
   updateKunde(
-    _id: "00000000-0000-0000-0000-000000000003",
-    titel: "Geaendert",
-    rating: 5,
-    art: "DRUCKAUSGABE",
-    verlag: "FOO_VERLAG",
-    preis: 99.99,
-    rabatt: 0.099,
-    lieferbar: false,
-    datum: "2018-01-31",
-    isbn: "3-8273-1552-2",
-    homepage: "https://test.te",
-    schlagwoerter: [
-      "JAVASCRIPT",
-      "TYPESCRIPT"
-    ],
+  _id: "00000000-0000-0000-0000-000000000003",
+  vorname: "Testtesttest",
+  nachname: "Aendern",
+  kundenart: "Gewerbekunde",
+  geschlecht: "W",
+  hausnummer: 184,
+  plz: 23456,
+  aktiv: false,
+  registrierungsdatum: "2019-01-01T00:00:00.000Z",
+  strasse: "Anderestrasse",
+  zusatzinfo: "Old Buyer",
+  bestellungen: "Veraendertes Verhalten",
     version: 0
   ) {
     version
   }
 }
 
-### Vorhandenes Kunde loeschen
+### Vorhandener Kunde loeschen
 POST https://localhost:8443/api
 Content-Type: application/json
 X-REQUEST-TYPE: GraphQL

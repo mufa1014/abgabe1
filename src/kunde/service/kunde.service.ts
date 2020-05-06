@@ -151,7 +151,7 @@ export class KundeService {
 
         // Pattern "Active Record" (urspruengl. von Ruby-on-Rails)
         const { vorname } = kundeData;
-        let tmp = await KundeModel.findOne({ vorname }).lean<KundeData>();
+        const tmp = await KundeModel.findOne({ vorname }).lean<KundeData>();
         if (tmp !== null) {
             // Promise<void> als Rueckgabewert
             // Eine von Error abgeleitete Klasse hat die Property "message"
