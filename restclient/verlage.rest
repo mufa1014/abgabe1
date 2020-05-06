@@ -1,0 +1,8 @@
+###
+### N e t z w e r k   -  V e r b i n d u n g   n o t w e n d i g
+###
+
+@host = localhost:8443
+
+### Suche alle Verlage
+https://{{host}}/verlage

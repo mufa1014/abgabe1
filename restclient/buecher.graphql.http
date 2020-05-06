@@ -1,0 +1,116 @@
+###
+### N e t z w e r k   -  V e r b i n d u n g   n o t w e n d i g
+###
+
+@host = localhost:8443
+
+### Suche titel und art von allen Buechern
+POST https://localhost:8443/api
+Content-Type: application/json
+X-REQUEST-TYPE: GraphQL
+
+{
+  buecher {
+    titel
+    art
+  }
+}
+
+### Suche titel, art und isbn von einem Buch mit vorhandener Buch-ID
+POST https://localhost:8443/api
+Content-Type: application/json
+X-REQUEST-TYPE: GraphQL
+
+{
+  buch(id: "00000000-0000-0000-0000-000000000001") {
+    titel
+    art
+    isbn
+  }
+}
+
+### Suche titel und art von Buechern mit vorhandenem Titel
+POST https://localhost:8443/api
+Content-Type: application/json
+X-REQUEST-TYPE: GraphQL
+
+{
+  buecher(titel: "Alpha") {
+    titel
+    art
+  }
+}
+
+
+### Suche titel, art und schlagwoerter von Buechern mit vorhandenem Titel
+POST https://localhost:8443/api
+Content-Type: application/json
+X-REQUEST-TYPE: GraphQL
+
+{
+  buecher(titel: "a") {
+    titel
+    art
+    schlagwoerter
+  }
+}
+
+### Neues Buch anlegen
+POST https://localhost:8443/api
+Content-Type: application/json
+X-REQUEST-TYPE: GraphQL
+
+mutation {
+  createBuch(
+    titel: "Test"
+    rating: 1
+    art: "KINDLE"
+    verlag: "IWI_VERLAG"
+    preis: 11.1
+    rabatt: 0.011
+    lieferbar: true
+    datum: null
+    isbn: "3-89722-583-2"
+    homepage: "http://test.de"
+    schlagwoerter: ["JAVASCRIPT"]
+  ) {
+    _id
+  }
+}
+
+### Vorhandenes Buch aktualisieren
+POST https://localhost:8443/api
+Content-Type: application/json
+X-REQUEST-TYPE: GraphQL
+
+mutation {
+  updateBuch(
+    _id: "00000000-0000-0000-0000-000000000003",
+    titel: "Geaendert",
+    rating: 5,
+    art: "DRUCKAUSGABE",
+    verlag: "FOO_VERLAG",
+    preis: 99.99,
+    rabatt: 0.099,
+    lieferbar: false,
+    datum: "2018-01-31",
+    isbn: "3-8273-1552-2",
+    homepage: "https://test.te",
+    schlagwoerter: [
+      "JAVASCRIPT",
+      "TYPESCRIPT"
+    ],
+    version: 0
+  ) {
+    version
+  }
+}
+
+### Vorhandenes Buch loeschen
+POST https://localhost:8443/api
+Content-Type: application/json
+X-REQUEST-TYPE: GraphQL
+
+mutation {
+  deleteBuch(id: "00000000-0000-0000-0000-000000000004")
+}
