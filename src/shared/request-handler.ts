@@ -74,7 +74,7 @@ class SharedRequestHandler {
     // Properties zugreifen, d.h. es muss vorher ein Typecast durchgefuehrt werden
     validateUUID(_: Request, res: Response, next: NextFunction, id: unknown) {
         if (typeof id !== 'string') {
-            res.status(HttpStatus.BAD_REQUEST).send('Keine gueltige Buch-ID');
+            res.status(HttpStatus.BAD_REQUEST).send('Keine gueltige Kunde-ID');
         }
         const idStr = id as string;
         if (validator.isUUID(idStr)) {
@@ -85,7 +85,7 @@ class SharedRequestHandler {
 
         logger.debug('SharedRequestHandler.validateUUID(): status=BAD_REQUEST');
         res.status(HttpStatus.BAD_REQUEST).send(
-            `${idStr} ist keine gueltige Buch-ID`,
+            `${idStr} ist keine gueltige Kunde-ID`,
         );
     }
 

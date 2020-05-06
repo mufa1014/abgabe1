@@ -15,5 +15,5 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-export { Buch, BuchData } from './buch';
-export { ValidationErrorMsg } from './validateBuch';
+export { Kunde, KundeData } from './kunde';
+export { ValidationErrorMsg } from './validateKunde';

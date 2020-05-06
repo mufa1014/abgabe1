@@ -17,6 +17,9 @@
 
 import type { Request, Response } from 'express';
 
-export const neuesBuch = (_: Request, res: Response) => {
-    res.render('neues-buch', { title: 'Neues Buch' });
+export const index = (_: Request, res: Response) => {
+    res.render('index', { title: 'Beispiel' });
 };
+
+export * from './neues-kunde';
+export * from './suche';

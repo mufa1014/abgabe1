@@ -17,9 +17,9 @@
 
 import { Collection, Db, GridFSBucket, MongoClient } from 'mongodb';
 import { dbConfig, serverConfig } from './../config';
-import { buecher } from './buecher';
 import { connectMongoDB } from './mongoDB';
 import { createReadStream } from 'fs';
+import { kunden } from './kunden';
 import { logger } from '../logger';
 import { resolve } from 'path';
 import { saveReadable } from './gridfs';
@@ -93,7 +93,7 @@ export const populateDB = async (dev?: boolean) => {
     );
 
     // http://mongodb.github.io/node-mongodb-native/3.5/api/Collection.html#insertMany
-    const result = await collection.insertMany(buecher);
+    const result = await collection.insertMany(kunden);
     logger.warn(`${result.insertedCount} Datensaetze wurden eingefuegt.`);
 
     await createIndex(collection);

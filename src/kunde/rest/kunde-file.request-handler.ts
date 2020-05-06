@@ -16,26 +16,26 @@
  */
 
 import {
-    BuchNotExistsError,
     FileNotFoundError,
+    KundeNotExistsError,
     MultipleFilesError,
-} from './../service/exceptions';
+} from '../service/exceptions';
 import { HttpStatus, logger } from '../../shared';
 import type { Request, Response } from 'express';
-import { BuchFileService } from '../service';
 import JSON5 from 'json5';
+import { KundeFileService } from '../service';
 
 // export bei async und await:
 // https://blogs.msdn.microsoft.com/typescript/2015/11/30/announcing-typescript-1-7
 // http://tc39.github.io/ecmascript-export
 // https://nemethgergely.com/async-function-best-practices#Using-async-functions-with-express
 
-export class BuchFileRequestHandler {
-    private readonly service = new BuchFileService();
+export class KundeFileRequestHandler {
+    private readonly service = new KundeFileService();
 
     upload(req: Request, res: Response) {
         const { id } = req.params;
-        logger.debug(`BuchFileRequestHandler.uploadBinary(): id=${id}`);
+        logger.debug(`KundeFileRequestHandler.uploadBinary(): id=${id}`);
 
         // https://jsao.io/2019/06/uploading-and-downloading-files-buffering-in-node-js
 
@@ -44,17 +44,17 @@ export class BuchFileRequestHandler {
         req.on('data', (chunk: Array<any>) => {
             const { length } = chunk;
             logger.debug(
-                `BuchFileRequestHandler.uploadBinary(): data ${length}`,
+                `KundeFileRequestHandler.uploadBinary(): data ${length}`,
             );
             data.push(chunk);
             totalBytesInBuffer += length;
         })
             .on('aborted', () =>
-                logger.debug('BuchFileRequestHandler.uploadBinary(): aborted'),
+                logger.debug('KundeFileRequestHandler.uploadBinary(): aborted'),
             )
             .on('end', () => {
                 logger.debug(
-                    `BuchFileRequestHandler.uploadBinary(): end ${totalBytesInBuffer}`,
+                    `KundeFileRequestHandler.uploadBinary(): end ${totalBytesInBuffer}`,
                 );
                 const buffer = Buffer.concat(data, totalBytesInBuffer);
                 this.save(req, id, buffer)
@@ -69,9 +69,9 @@ export class BuchFileRequestHandler {
 
     async download(req: Request, res: Response) {
         const { id } = req.params;
-        logger.debug(`BuchFileRequestHandler.downloadBinary(): ${id}`);
+        logger.debug(`KundeFileRequestHandler.downloadBinary(): ${id}`);
         if (id === undefined) {
-            res.status(HttpStatus.BAD_REQUEST).send('Keine Buch-Id');
+            res.status(HttpStatus.BAD_REQUEST).send('Keine Kunde-Id');
             return;
         }
 
@@ -95,7 +95,7 @@ export class BuchFileRequestHandler {
     }
 
     private handleDownloadError(err: Error, res: Response) {
-        if (err instanceof BuchNotExistsError) {
+        if (err instanceof KundeNotExistsError) {
             logger.debug(err.message);
             res.status(HttpStatus.NOT_FOUND).send(err.message);
             return;
@@ -114,7 +114,7 @@ export class BuchFileRequestHandler {
         }
 
         logger.error(
-            `BuchFileRequestHandler.handleDownloadError(): error=${JSON5.stringify(
+            `KundeFileRequestHandler.handleDownloadError(): error=${JSON5.stringify(
                 err,
             )}`,
         );

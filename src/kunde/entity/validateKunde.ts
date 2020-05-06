@@ -15,8 +15,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { BuchData } from './buch';
 import type { Document } from 'mongoose';
+import { KundeData } from './kunde';
 import { MAX_RATING } from '../../shared';
 import validator from 'validator';
 
@@ -33,26 +33,26 @@ export interface ValidationErrorMsg {
 }
 
 /* eslint-disable no-null/no-null */
-export const validateBuch = (buch: Document) => {
+export const validateKunde = (kunde: Document) => {
     const err: ValidationErrorMsg = {};
-    const { titel, art, rating, verlag, isbn, homepage } = buch as Document &
-        BuchData;
+    const { titel, art, rating, verlag, isbn, homepage } = kunde as Document &
+        KundeData;
 
-    const buchDocument = buch;
-    if (!buchDocument.isNew && !isUUID(buchDocument._id)) {
-        err.id = 'Das Buch hat eine ungueltige ID.';
+    const kundeDocument = kunde;
+    if (!kundeDocument.isNew && !isUUID(kundeDocument._id)) {
+        err.id = 'Das Kunde hat eine ungueltige ID.';
     }
 
     if (titel === undefined || titel === null || titel === '') {
-        err.titel = 'Ein Buch muss einen Titel haben.';
+        err.titel = 'Ein Kunde muss einen Titel haben.';
     } else if (!/^\w.*/u.test(titel)) {
         err.titel =
-            'Ein Buchtitel muss mit einem Buchstaben, einer Ziffer oder _ beginnen.';
+            'Ein Kundetitel muss mit einem Kundestaben, einer Ziffer oder _ beginnen.';
     }
     if (art === undefined || art === null || art === '') {
-        err.art = 'Die Art eines Buches muss gesetzt sein';
+        err.art = 'Die Art eines Kundees muss gesetzt sein';
     } else if (art !== 'KINDLE' && art !== 'DRUCKAUSGABE') {
-        err.art = 'Die Art eines Buches muss KINDLE oder DRUCKAUSGABE sein.';
+        err.art = 'Die Art eines Kundees muss KINDLE oder DRUCKAUSGABE sein.';
     }
     if (
         rating !== undefined &&
@@ -62,10 +62,10 @@ export const validateBuch = (buch: Document) => {
         err.rating = `${rating} ist keine gueltige Bewertung.`;
     }
     if (verlag === undefined || verlag === null || verlag === '') {
-        err.verlag = 'Der Verlag des Buches muss gesetzt sein.';
+        err.verlag = 'Der Verlag des Kundees muss gesetzt sein.';
     } else if (verlag !== 'FOO_VERLAG' && verlag !== 'BAR_VERLAG') {
         err.verlag =
-            'Der Verlag eines Buches muss FOO_VERLAG oder BAR_VERLAG sein.';
+            'Der Verlag eines Kundees muss FOO_VERLAG oder BAR_VERLAG sein.';
     }
     if (
         isbn !== undefined &&

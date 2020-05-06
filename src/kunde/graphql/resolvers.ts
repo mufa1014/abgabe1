@@ -19,15 +19,15 @@ import type {
     IResolverObject,
     IResolvers,
 } from 'graphql-tools/dist/Interfaces';
-import type { Buch } from './../entity/types';
-import { BuchService } from '../service/buch.service';
+import type { Kunde } from '../entity/types';
+import { KundeService } from '../service/kunde.service';
 import { logger } from '../../shared';
 
-const buchService = new BuchService();
+const kundeService = new KundeService();
 
-const findBuecher = (titel: string) => {
+const findKunden = (titel: string) => {
     const suchkriterium = titel === undefined ? {} : { titel };
-    return buchService.find(suchkriterium);
+    return kundeService.find(suchkriterium);
 };
 
 interface TitelCriteria {
@@ -38,35 +38,35 @@ interface IdCriteria {
     id: string;
 }
 
-const createBuch = (buch: Buch) => {
-    buch.datum = new Date(buch.datum as string);
-    return buchService.create(buch);
+const createKunde = (kunde: Kunde) => {
+    kunde.datum = new Date(kunde.datum as string);
+    return kundeService.create(kunde);
 };
 
-const updateBuch = async (buch: Buch) => {
-    const version = buch.__v ?? 0;
-    buch.datum = new Date(buch.datum as string);
-    const buchUpdated = await buchService.update(buch, version.toString());
-    logger.debug(`resolvers updateBuch(): Versionsnummer: ${buch.__v}`);
-    return buchUpdated;
+const updateKunde = async (kunde: Kunde) => {
+    const version = kunde.__v ?? 0;
+    kunde.datum = new Date(kunde.datum as string);
+    const kundeUpdated = await kundeService.update(kunde, version.toString());
+    logger.debug(`resolvers updateKunde(): Versionsnummer: ${kunde.__v}`);
+    return kundeUpdated;
 };
 
-const deleteBuch = async (id: string) => {
-    await buchService.delete(id);
+const deleteKunde = async (id: string) => {
+    await kundeService.delete(id);
 };
 
 // Queries passend zu "type Query" in typeDefs.ts
 const query: IResolverObject = {
-    // Buecher suchen, ggf. mit Titel als Suchkriterium
-    buecher: (_: unknown, { titel }: TitelCriteria) => findBuecher(titel),
-    // Ein Buch mit einer bestimmten ID suchen
-    buch: (_: unknown, { id }: IdCriteria) => buchService.findById(id),
+    // Kunden suchen, ggf. mit Titel als Suchkriterium
+    kunden: (_: unknown, { titel }: TitelCriteria) => findKunden(titel),
+    // Ein Kunde mit einer bestimmten ID suchen
+    kunde: (_: unknown, { id }: IdCriteria) => kundeService.findById(id),
 };
 
 const mutation: IResolverObject = {
-    createBuch: (_: unknown, buch: Buch) => createBuch(buch),
-    updateBuch: (_: unknown, buch: Buch) => updateBuch(buch),
-    deleteBuch: (_: unknown, { id }: IdCriteria) => deleteBuch(id),
+    createKunde: (_: unknown, kunde: Kunde) => createKunde(kunde),
+    updateKunde: (_: unknown, kunde: Kunde) => updateKunde(kunde),
+    deleteKunde: (_: unknown, { id }: IdCriteria) => deleteKunde(id),
 };
 
 export const resolvers: IResolvers = {

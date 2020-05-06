@@ -20,18 +20,18 @@ export enum Verlag {
     BAR_VERLAG = 'BAR_VERLAG',
 }
 
-export enum BuchArt {
+export enum KundeArt {
     KINDLE = 'KINDLE',
     DRUCKAUSGABE = 'DRUCKAUSGABE',
 }
 
 // gemeinsames Basis-Interface fuer REST und GraphQL
-export interface Buch {
+export interface Kunde {
     _id?: string;
     __v?: number;
     titel: string;
     rating?: number;
-    art?: BuchArt | '';
+    art?: KundeArt | '';
     verlag: Verlag | '';
     preis: number;
     rabatt?: number;
@@ -43,7 +43,7 @@ export interface Buch {
     autoren: any;
 }
 
-export interface BuchData extends Buch {
+export interface KundeData extends Kunde {
     createdAt?: number;
     updatedAt?: number;
     _links?: {

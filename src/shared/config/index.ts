@@ -15,7 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-export * from './buch';
+export * from './kunde';
 export * from './db';
 export * from './jwt';
 export * from './logger';

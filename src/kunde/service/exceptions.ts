@@ -17,7 +17,7 @@
 
 /* eslint-disable max-classes-per-file */
 
-import type { ValidationErrorMsg } from './../entity/types';
+import type { ValidationErrorMsg } from '../entity/types';
 import { logger } from '../../shared';
 
 // http://stackoverflow.com/questions/1382107/whats-a-good-way-to-extend-error-in-javascript#answer-5251506
@@ -63,12 +63,12 @@ export class VersionInvalidError extends Error {
     }
 }
 
-export class BuchNotExistsError extends Error {
-    readonly name = 'BuchNotExistsError';
+export class KundeNotExistsError extends Error {
+    readonly name = 'KundeNotExistsError';
 
     constructor(public readonly message: string) {
         super();
-        logger.debug(`BuchNotExistsError.constructor(): ${message}`);
+        logger.debug(`KundeNotExistsError.constructor(): ${message}`);
     }
 }
 

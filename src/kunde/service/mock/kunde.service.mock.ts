@@ -15,39 +15,39 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { buch, buecher } from './buch';
-import { Buch } from '../../entity/types';
+import { kunde, kunden } from './kunde';
 import JSON5 from 'json5';
+import { Kunde } from '../../entity/types';
 import { logger } from '../../../shared';
 import { v4 as uuid } from 'uuid';
 
 /* eslint-disable @typescript-eslint/no-unused-vars,require-await,@typescript-eslint/require-await */
-export class BuchServiceMock {
+export class KundeServiceMock {
     async findById(id: string) {
-        buch._id = id;
-        return buch;
+        kunde._id = id;
+        return kunde;
     }
 
     async find(_?: any) {
-        return buecher;
+        return kunden;
     }
 
-    async create(buchData: Buch) {
-        buchData._id = uuid();
-        logger.info(`Neues Buch: ${JSON5.stringify(buchData)}`);
-        return buchData;
+    async create(kundeData: Kunde) {
+        kundeData._id = uuid();
+        logger.info(`Neues Kunde: ${JSON5.stringify(kundeData)}`);
+        return kundeData;
     }
 
-    async update(buchData: Buch) {
-        if (buchData.__v !== undefined) {
-            buchData.__v++;
+    async update(kundeData: Kunde) {
+        if (kundeData.__v !== undefined) {
+            kundeData.__v++;
         }
-        logger.info(`Aktualisiertes Buch: ${JSON5.stringify(buchData)}`);
-        return Promise.resolve(buchData);
+        logger.info(`Aktualisiertes Kunde: ${JSON5.stringify(kundeData)}`);
+        return Promise.resolve(kundeData);
     }
 
     async remove(id: string) {
-        logger.info(`ID des geloeschten Buches: ${id}`);
+        logger.info(`ID des geloeschten Kundees: ${id}`);
         return true;
     }
 }

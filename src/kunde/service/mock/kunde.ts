@@ -15,14 +15,14 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { BuchArt, Verlag } from './../../entity';
-import type { BuchData } from './../../entity/types';
+import { KundeArt, Verlag } from '../../entity';
+import type { KundeData } from '../../entity/types';
 
-export const buch: BuchData = {
+export const kunde: KundeData = {
     _id: '00000000-0000-0000-0000-000000000001',
     titel: 'Alpha',
     rating: 4,
-    art: BuchArt.DRUCKAUSGABE,
+    art: KundeArt.DRUCKAUSGABE,
     verlag: Verlag.FOO_VERLAG,
     preis: 11.1,
     rabatt: 0.011,
@@ -46,13 +46,13 @@ export const buch: BuchData = {
     updatedAt: 0,
 };
 
-export const buecher: Array<BuchData> = [
-    buch,
+export const kunden: Array<KundeData> = [
+    kunde,
     {
         _id: '00000000-0000-0000-0000-000000000002',
         titel: 'Beta',
         rating: 2,
-        art: BuchArt.KINDLE,
+        art: KundeArt.KINDLE,
         verlag: Verlag.FOO_VERLAG,
         preis: 22.2,
         rabatt: 0.022,

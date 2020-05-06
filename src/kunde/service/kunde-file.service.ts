@@ -16,27 +16,27 @@
  */
 
 import {
-    BuchNotExistsError,
     FileNotFoundError,
+    KundeNotExistsError,
     MultipleFilesError,
 } from './exceptions';
 import { GridFSBucket, ObjectId } from 'mongodb';
 import { closeMongoDBClient, connectMongoDB, saveReadable } from '../../shared';
-import { BuchModel } from '../entity';
 import JSON5 from 'json5';
+import { KundeModel } from '../entity';
 import { Readable } from 'stream';
 import { logger } from '../../shared';
 
 /* eslint-disable no-null/no-null */
-export class BuchFileService {
+export class KundeFileService {
     async save(id: string, buffer: Buffer, contentType: string | undefined) {
         logger.debug(
-            `BuchFileService.save(): id = ${id}, contentType=${contentType}`,
+            `KundeFileService.save(): id = ${id}, contentType=${contentType}`,
         );
 
-        // Gibt es ein Buch zur angegebenen ID?
-        const buch = await BuchModel.findById(id);
-        if (buch === null) {
+        // Gibt es ein Kunde zur angegebenen ID?
+        const kunde = await KundeModel.findById(id);
+        if (kunde === null) {
             return false;
         }
 
@@ -57,7 +57,7 @@ export class BuchFileService {
     }
 
     async find(filename: string) {
-        logger.debug(`BuchFileService.findFile(): filename=${filename}`);
+        logger.debug(`KundeFileService.findFile(): filename=${filename}`);
         await this.checkFilename(filename);
 
         const { db, client } = await connectMongoDB();
@@ -75,19 +75,19 @@ export class BuchFileService {
     }
 
     private async deleteFiles(filename: string, bucket: GridFSBucket) {
-        logger.debug(`BuchFileService.deleteFiles(): filename=${filename}`);
+        logger.debug(`KundeFileService.deleteFiles(): filename=${filename}`);
         const idObjects: Array<{ _id: ObjectId }> = await bucket
             .find({ filename })
             .project({ _id: 1 })
             .toArray();
         const ids = idObjects.map(obj => obj._id);
         logger.debug(
-            `BuchFileService.deleteFiles(): ids=${JSON5.stringify(ids)}`,
+            `KundeFileService.deleteFiles(): ids=${JSON5.stringify(ids)}`,
         );
         ids.forEach(fileId =>
             bucket.delete(fileId, () =>
                 logger.debug(
-                    `BuchFileService.deleteFiles(): geloeschte ID=${JSON5.stringify(
+                    `KundeFileService.deleteFiles(): geloeschte ID=${JSON5.stringify(
                         fileId,
                     )}`,
                 ),
@@ -96,18 +96,18 @@ export class BuchFileService {
     }
 
     private async checkFilename(filename: string) {
-        logger.debug(`BuchFileService.checkFilename(): filename=${filename}`);
+        logger.debug(`KundeFileService.checkFilename(): filename=${filename}`);
 
-        // Gibt es ein Buch mit dem gegebenen "filename" als ID?
-        const buch = await BuchModel.findById(filename);
-        if (buch === null) {
-            throw new BuchNotExistsError(
-                `Es gibt kein Buch mit der Id ${filename}`,
+        // Gibt es ein Kunde mit dem gegebenen "filename" als ID?
+        const kunde = await KundeModel.findById(filename);
+        if (kunde === null) {
+            throw new KundeNotExistsError(
+                `Es gibt kein Kunde mit der Id ${filename}`,
             );
         }
 
         logger.debug(
-            `BuchFileService.checkFilename(): buch=${JSON5.stringify(buch)}`,
+            `KundeFileService.checkFilename(): kunde=${JSON5.stringify(kunde)}`,
         );
     }
 
@@ -123,19 +123,19 @@ export class BuchFileService {
         switch (files.length) {
             case 0:
                 throw new FileNotFoundError(
-                    `BuchFileService.getContentType(): Es gibt kein File mit Name ${filename}`,
+                    `KundeFileService.getContentType(): Es gibt kein File mit Name ${filename}`,
                 );
             case 1: {
                 const [file] = files;
                 const { contentType }: { contentType: string } = file.metadata;
                 logger.debug(
-                    `BuchFileService.getContentType(): contentType=${contentType}`,
+                    `KundeFileService.getContentType(): contentType=${contentType}`,
                 );
                 return contentType;
             }
             default:
                 throw new MultipleFilesError(
-                    `BuchFileService.getContentType(): Es gibt mehr als ein File mit Name ${filename}`,
+                    `KundeFileService.getContentType(): Es gibt mehr als ein File mit Name ${filename}`,
                 );
         }
     }

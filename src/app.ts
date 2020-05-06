@@ -35,8 +35,8 @@ import {
     findById,
     update,
     upload,
-} from './buch/rest';
-import { index, neuesBuch, suche } from './buch/html';
+} from './kunde/rest';
+import { index, neuesKunde, suche } from './kunde/html';
 import { isAdmin, isAdminMitarbeiter, login, validateJwt } from './auth/rest';
 // Einlesen von application/json im Request-Rumpf
 // Fuer multimediale Daten (Videos, Bilder, Audios): raw-body
@@ -51,9 +51,9 @@ import { join } from 'path';
 import { makeExecutableSchema } from 'graphql-tools';
 import morgan from 'morgan';
 import rateLimit from 'express-rate-limit';
-import { resolvers } from './buch/graphql/resolvers';
+import { resolvers } from './kunde/graphql/resolvers';
 import responseTime from 'response-time';
-import { typeDefs } from './buch/graphql/typeDefs';
+import { typeDefs } from './kunde/graphql/typeDefs';
 
 const { Router } = express;
 
@@ -70,7 +70,7 @@ const limiter = rateLimit(rateLimitOptions);
 // const uploader = multer({storage})
 
 export const PATHS = {
-    buecher: '/buecher',
+    kunden: '/kunden',
     verlage: '/verlage',
     login: '/login',
     graphql: '/api',
@@ -132,17 +132,17 @@ class App {
     }
 
     private routes() {
-        this.buecherRoutes();
+        this.kundenRoutes();
         this.verlagRoutes();
         this.loginRoutes();
-        this.buchGraphqlRoutes();
+        this.kundeGraphqlRoutes();
         this.htmlRoutes();
 
         this.app.get('*', notFound);
         this.app.use(internalError);
     }
 
-    private buecherRoutes() {
+    private kundenRoutes() {
         // eslint-disable-line max-lines-per-function
         // vgl: Spring WebFlux.fn
         // http://expressjs.com/en/api.html
@@ -188,7 +188,7 @@ class App {
             .put(`/:${idParam}/file`, validateJwt, isAdminMitarbeiter, upload)
             .get(`/:${idParam}/file`, download);
 
-        this.app.use(PATHS.buecher, router);
+        this.app.use(PATHS.kunden, router);
     }
 
     private verlagRoutes() {
@@ -209,7 +209,7 @@ class App {
         this.app.use(PATHS.login, router);
     }
 
-    private buchGraphqlRoutes() {
+    private kundeGraphqlRoutes() {
         const schema = makeExecutableSchema({
             typeDefs,
             resolvers,
@@ -226,7 +226,7 @@ class App {
         const router = Router(); // eslint-disable-line new-cap
         router.route('/').get(index);
         router.route('/suche').get(suche);
-        router.route('/neues-buch').get(neuesBuch);
+        router.route('/neues-kunde').get(neuesKunde);
         this.app.use(PATHS.html, router);
 
         // Alternativen zu Pug: EJS, Handlebars, ...

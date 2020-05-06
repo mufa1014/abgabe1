@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2019 - present Juergen Zimmermann, Hochschule Karlsruhe
+ * Copyright (C) 2018 - present Juergen Zimmermann, Hochschule Karlsruhe
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,5 +15,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-export * from './buch.service.mock';
-export * from './buch';
+import type { Request, Response } from 'express';
+import { KundeService } from '../service/kunde.service';
+
+const kundeService = new KundeService();
+
+export const suche = async (_: Request, res: Response) => {
+    const kunden = await kundeService.find();
+    res.render('suche', { title: 'Suche', kunden });
+};

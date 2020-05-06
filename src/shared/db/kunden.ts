@@ -15,7 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-export const buecher = [
+export const kunden = [
     {
         _id: '00000000-0000-0000-0000-000000000001',
         titel: 'Alpha',

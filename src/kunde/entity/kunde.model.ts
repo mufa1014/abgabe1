@@ -31,7 +31,7 @@ import { autoIndex, optimistic } from '../../shared';
 // http://vincit.github.io/objection.js
 
 // https://mongoosejs.com/docs/schematypes.html
-export const buchSchema = new Schema(
+export const kundeSchema = new Schema(
     {
         // MongoDB erstellt implizit einen Index fuer _id
         _id: { type: String },
@@ -65,10 +65,10 @@ export const buchSchema = new Schema(
 );
 
 // Optimistische Synchronisation durch das Feld __v fuer die Versionsnummer
-buchSchema.plugin(optimistic);
+kundeSchema.plugin(optimistic);
 
 // Methoden zum Schema hinzufuegen, damit sie spaeter beim Model (s.u.)
-// verfuegbar sind, was aber bei buch.check() zu eines TS-Syntaxfehler fuehrt:
+// verfuegbar sind, was aber bei kunde.check() zu eines TS-Syntaxfehler fuehrt:
 // schema.methods.check = () => {...}
 // schema.statics.findByTitel =
 //     (titel: string, cb: Function) =>
@@ -77,4 +77,4 @@ buchSchema.plugin(optimistic);
 // Ein Model ist ein uebersetztes Schema und stellt die CRUD-Operationen fuer
 // die Dokumente bereit, d.h. das Pattern "Active Record" wird realisiert.
 // Name des Models = Name der Collection
-export const BuchModel = model('Buch', buchSchema);
+export const KundeModel = model('Kunde', kundeSchema);

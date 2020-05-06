@@ -23,7 +23,7 @@
  *      String:
  *      Boolean: true, false
  *      ID: eindeutiger Bezeichner, wird serialisiert wie ein String
- *  Buch: eigene Typdefinition für Queries
+ *  Kunde: eigene Typdefinition für Queries
  *        "!" markiert Pflichtfelder
  *  Query: Signatur der Lese-Methoden
  *  Mutation: Signatur der Schreib-Methoden
@@ -39,7 +39,7 @@ export const typeDefs = `
         BAR_VERLAG
     }
 
-    type Buch {
+    type Kunde {
         _id: ID!
         titel: String!
         rating: Int
@@ -56,18 +56,18 @@ export const typeDefs = `
     }
 
     type Query {
-        buecher(titel: String): [Buch]
-        buch(id: ID!): Buch
+        kunden(titel: String): [Kunde]
+        kunde(id: ID!): Kunde
     }
 
     type Mutation {
-        createBuch(titel: String!, rating: Int, art: String, verlag: String!
+        createKunde(titel: String!, rating: Int, art: String, verlag: String!
             preis: Float, rabatt: Float, lieferbar: Boolean, datum: String,
-            isbn: String, homepage: String, schlagwoerter: [String]): Buch
-        updateBuch(_id: ID, titel: String!, rating: Int, art: String,
+            isbn: String, homepage: String, schlagwoerter: [String]): Kunde
+        updateKunde(_id: ID, titel: String!, rating: Int, art: String,
             verlag: String!, preis: Float, rabatt: Float, lieferbar: Boolean,
             datum: String, isbn: String, homepage: String,
-            schlagwoerter: [String], version: Int): Buch
-        deleteBuch(id: ID!): Boolean
+            schlagwoerter: [String], version: Int): Kunde
+        deleteKunde(id: ID!): Boolean
     }
 `;

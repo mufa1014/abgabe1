@@ -16,19 +16,19 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import type { Buch, BuchData } from '../entity/types';
-import { BuchModel, validateBuch } from '../entity';
 import {
-    BuchNotExistsError,
     IsbnExistsError,
+    KundeNotExistsError,
     TitelExistsError,
     ValidationError,
     VersionInvalidError,
 } from './exceptions';
+import type { Kunde, KundeData } from '../entity/types';
+import { KundeModel, validateKunde } from '../entity';
 import { dbConfig, logger } from '../../shared';
-import { BuchServiceMock } from './mock';
 import type { Document } from 'mongoose';
 import JSON5 from 'json5';
+import { KundeServiceMock } from './mock';
 import { startSession } from 'mongoose';
 // UUID v4: random
 // https://github.com/uuidjs/uuid
@@ -41,12 +41,12 @@ const { mockDB } = dbConfig;
 // https://github.com/Automattic/mongoose/issues/3949
 
 /* eslint-disable require-await, no-null/no-null */
-export class BuchService {
-    private readonly mock: BuchServiceMock | undefined;
+export class KundeService {
+    private readonly mock: KundeServiceMock | undefined;
 
     constructor() {
         if (mockDB) {
-            this.mock = new BuchServiceMock();
+            this.mock = new KundeServiceMock();
         }
     }
 
@@ -63,15 +63,15 @@ export class BuchService {
         if (this.mock !== undefined) {
             return this.mock.findById(id);
         }
-        logger.debug(`BuchService.findById(): id= ${id}`);
+        logger.debug(`KundeService.findById(): id= ${id}`);
 
-        // ein Buch zur gegebenen ID asynchron suchen
+        // ein Kunde zur gegebenen ID asynchron suchen
         // Pattern "Active Record" (urspruengl. von Ruby-on-Rails)
         // null falls nicht gefunden
         // lean() liefert ein "Plain JavaScript Object" statt ein Mongoose Document
-        return BuchModel.findById(id)
-            .lean<BuchData>()
-            .then(buch => buch ?? undefined);
+        return KundeModel.findById(id)
+            .lean<KundeData>()
+            .then(kunde => kunde ?? undefined);
     }
 
     async find(query?: any) {
@@ -79,20 +79,20 @@ export class BuchService {
             return this.mock.find(query);
         }
 
-        logger.debug(`BuchService.find(): query=${JSON5.stringify(query)}`);
-        const tmpQuery = BuchModel.find().lean<BuchData>();
+        logger.debug(`KundeService.find(): query=${JSON5.stringify(query)}`);
+        const tmpQuery = KundeModel.find().lean<KundeData>();
 
-        // alle Buecher asynchron suchen u. aufsteigend nach titel sortieren
+        // alle Kunden asynchron suchen u. aufsteigend nach titel sortieren
         // nach _id sortieren: Timestamp des INSERTs (Basis: Sek)
         // https://docs.mongodb.org/manual/reference/object-id
         if (query === undefined || Object.entries(query).length === 0) {
             // lean() liefert ein "Plain JavaScript Object" statt ein Mongoose Document
-            return tmpQuery.sort('titel').lean<BuchData>();
+            return tmpQuery.sort('titel').lean<KundeData>();
         }
 
         const { titel, javascript, typescript, ...dbQuery } = query;
 
-        // Buecher zur Query (= JSON-Objekt durch Express) asynchron suchen
+        // Kunden zur Query (= JSON-Objekt durch Express) asynchron suchen
         if (titel !== undefined) {
             // Titel in der Query: Teilstring des Titels,
             // d.h. "LIKE" als regulaerer Ausdruck
@@ -118,31 +118,31 @@ export class BuchService {
         } else {
             dbQuery.schlagwoerter = schlagwoerter;
         }
-
-        logger.debug(`BuchService.find(): dbQuery=${JSON5.stringify(dbQuery)}`);
+        // prettier-ignore
+        logger.debug(`KundeService.find(): dbQuery=${JSON5.stringify(dbQuery)}`);
 
         // Pattern "Active Record" (urspruengl. von Ruby-on-Rails)
         // leeres Array, falls nichts gefunden wird
         // lean() liefert ein "Plain JavaScript Object" statt ein Mongoose Document
-        return BuchModel.find(dbQuery).lean<BuchData>();
-        // Buch.findOne(query), falls das Suchkriterium eindeutig ist
+        return KundeModel.find(dbQuery).lean<KundeData>();
+        // Kunde.findOne(query), falls das Suchkriterium eindeutig ist
         // bei findOne(query) wird null zurueckgeliefert, falls nichts gefunden
     }
 
     // eslint-disable-next-line max-statements,max-lines-per-function
-    async create(buchData: Buch) {
+    async create(kundeData: Kunde) {
         if (this.mock !== undefined) {
-            return this.mock.create(buchData);
+            return this.mock.create(kundeData);
         }
 
-        // Das gegebene Buch innerhalb von save() asynchron neu anlegen:
+        // Das gegebene Kunde innerhalb von save() asynchron neu anlegen:
         // Promise.reject(err) bei Verletzung von DB-Constraints, z.B. unique
 
-        const buch = new BuchModel(buchData);
-        const errorMsg = validateBuch(buch);
+        const kunde = new KundeModel(kundeData);
+        const errorMsg = validateKunde(kunde);
         if (errorMsg !== undefined) {
             logger.debug(
-                `BuchService.create(): Validation Message: ${JSON5.stringify(
+                `KundeService.create(): Validation Message: ${JSON5.stringify(
                     errorMsg,
                 )}`,
             );
@@ -152,8 +152,8 @@ export class BuchService {
         }
 
         // Pattern "Active Record" (urspruengl. von Ruby-on-Rails)
-        const { titel } = buchData;
-        let tmp = await BuchModel.findOne({ titel }).lean<BuchData>();
+        const { titel } = kundeData;
+        let tmp = await KundeModel.findOne({ titel }).lean<KundeData>();
         if (tmp !== null) {
             // Promise<void> als Rueckgabewert
             // Eine von Error abgeleitete Klasse hat die Property "message"
@@ -162,8 +162,8 @@ export class BuchService {
             );
         }
 
-        const { isbn } = buchData;
-        tmp = await BuchModel.findOne({ isbn }).lean<BuchData>();
+        const { isbn } = kundeData;
+        tmp = await KundeModel.findOne({ isbn }).lean<KundeData>();
         if (tmp !== null) {
             return Promise.reject(
                 new IsbnExistsError(
@@ -172,18 +172,18 @@ export class BuchService {
             );
         }
 
-        buch._id = uuid(); // eslint-disable-line require-atomic-updates
+        kunde._id = uuid(); // eslint-disable-line require-atomic-updates
 
-        let buchSaved!: Document;
+        let kundeSaved!: Document;
         // https://www.mongodb.com/blog/post/quick-start-nodejs--mongodb--how-to-implement-transactions
         const session = await startSession();
         try {
             await session.withTransaction(async () => {
-                buchSaved = await buch.save();
+                kundeSaved = await kunde.save();
             });
         } catch (err) {
             logger.error(
-                `BuchService.create(): Die Transaktion wurde abgebrochen: ${JSON5.stringify(
+                `KundeService.create(): Die Transaktion wurde abgebrochen: ${JSON5.stringify(
                     err,
                 )}`,
             );
@@ -191,22 +191,22 @@ export class BuchService {
         } finally {
             session.endSession();
         }
-        const buchDataSaved: BuchData = buchSaved.toObject();
+        const kundeDataSaved: KundeData = kundeSaved.toObject();
         logger.debug(
-            `BuchService.create(): buchDataSaved=${JSON5.stringify(
-                buchDataSaved,
+            `KundeService.create(): kundeDataSaved=${JSON5.stringify(
+                kundeDataSaved,
             )}`,
         );
 
         // TODO Email senden
 
-        return buchDataSaved;
+        return kundeDataSaved;
     }
 
     // eslint-disable-next-line max-lines-per-function,max-statements
-    async update(buchData: Buch, versionStr: string) {
+    async update(kundeData: Kunde, versionStr: string) {
         if (this.mock !== undefined) {
-            return this.mock.update(buchData);
+            return this.mock.update(kundeData);
         }
 
         if (versionStr === undefined) {
@@ -220,14 +220,14 @@ export class BuchService {
                 new VersionInvalidError('Die Versionsnummer ist ungueltig'),
             );
         }
-        logger.debug(`BuchService.update(): version=${version}`);
-
-        logger.debug(`BuchService.update(): buch=${JSON5.stringify(buchData)}`);
-        const buch = new BuchModel(buchData);
-        const err = validateBuch(buch);
+        logger.debug(`KundeService.update(): version=${version}`);
+        // prettier-ignore
+        logger.debug(`KundeService.update(): kunde=${JSON5.stringify(kundeData)}`);
+        const kunde = new KundeModel(kundeData);
+        const err = validateKunde(kunde);
         if (err !== undefined) {
             logger.debug(
-                `BuchService.update(): Validation Message: ${JSON5.stringify(
+                `KundeService.update(): Validation Message: ${JSON5.stringify(
                     err,
                 )}`,
             );
@@ -235,9 +235,9 @@ export class BuchService {
             return Promise.reject(new ValidationError(err));
         }
 
-        const { titel }: { titel: string } = buchData;
-        const tmp = await BuchModel.findOne({ titel }).lean<BuchData>();
-        if (tmp !== null && tmp._id !== buch._id) {
+        const { titel }: { titel: string } = kundeData;
+        const tmp = await KundeModel.findOne({ titel }).lean<KundeData>();
+        if (tmp !== null && tmp._id !== kunde._id) {
             return Promise.reject(
                 new TitelExistsError(
                     `Der Titel "${titel}" existiert bereits bei ${
@@ -247,13 +247,13 @@ export class BuchService {
             );
         }
 
-        const buchDb = await BuchModel.findById(buch._id).lean<BuchData>();
-        if (buchDb === null) {
+        const kundeDb = await KundeModel.findById(kunde._id).lean<KundeData>();
+        if (kundeDb === null) {
             return Promise.reject(
-                new BuchNotExistsError('Kein Buch mit der ID'),
+                new KundeNotExistsError('Kein Kunde mit der ID'),
             );
         }
-        const versionDb = buchDb?.__v ?? 0;
+        const versionDb = kundeDb?.__v ?? 0;
         if (version < versionDb) {
             return Promise.reject(
                 new VersionInvalidError(
@@ -261,16 +261,16 @@ export class BuchService {
                 ),
             );
         }
-
+        // prettier-ignore
         // findByIdAndReplace ersetzt ein Document mit ggf. weniger Properties
-        const result = await BuchModel.findByIdAndUpdate(buch._id, buch).lean<
-            BuchData
+        const result = await KundeModel.findByIdAndUpdate(kunde._id, kunde).lean
+        <KundeData
         >();
         if (result === null) {
             return Promise.reject(
                 new VersionInvalidError(
-                    `Kein Buch mit ID ${
-                        buch._id as string
+                    `Kein Kunde mit ID ${
+                        kunde._id as string
                     } und Version ${version}`,
                 ),
             );
@@ -279,11 +279,12 @@ export class BuchService {
         if (result.__v !== undefined) {
             result.__v++;
         }
-        logger.debug(`BuchService.update(): result=${JSON5.stringify(result)}`);
+        // prettier-ignore
+        logger.debug(`KundeService.update(): result=${JSON5.stringify(result)}`);
 
         // Weitere Methoden von mongoose zum Aktualisieren:
-        //    Buch.findOneAndUpdate(update)
-        //    buch.update(bedingung)
+        //    Kunde.findOneAndUpdate(update)
+        //    kunde.update(bedingung)
         return Promise.resolve(result);
     }
 
@@ -291,15 +292,15 @@ export class BuchService {
         if (this.mock !== undefined) {
             return this.mock.remove(id);
         }
-        logger.debug(`BuchService.delete(): id=${id}`);
+        logger.debug(`KundeService.delete(): id=${id}`);
 
-        // Das Buch zur gegebenen ID asynchron loeschen
-        const { deletedCount } = await BuchModel.deleteOne({ _id: id });
-        logger.debug(`BuchService.delete(): deletedCount=${deletedCount}`);
+        // Das Kunde zur gegebenen ID asynchron loeschen
+        const { deletedCount } = await KundeModel.deleteOne({ _id: id });
+        logger.debug(`KundeService.delete(): deletedCount=${deletedCount}`);
         return deletedCount !== undefined;
 
         // Weitere Methoden von mongoose, um zu loeschen:
-        //  Buch.findByIdAndRemove(id)
-        //  Buch.findOneAndRemove(bedingung)
+        //  Kunde.findByIdAndRemove(id)
+        //  Kunde.findOneAndRemove(bedingung)
     }
 }
