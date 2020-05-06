@@ -15,9 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/* globals describe, expect, test, beforeAll, afterAll */
-
-// REST-Schnittstelle testen: Supertest oder (primitiver!) request
+/* globals describe, expect, test, beforeAll, beforeEach, afterAll */
 
 import { HttpStatus } from '../../../src/shared';
 import { PATHS } from '../../../src/app';
@@ -34,17 +32,22 @@ import('chai-string').then(chaiString => chai.use(chaiString.default));
 // -----------------------------------------------------------------------------
 // T e s t d a t e n
 // -----------------------------------------------------------------------------
-const idVorhanden = '00000000-0000-0000-0000-000000000001';
-const idNichtVorhanden = '00000000-0000-0000-0000-000000000999';
+const id = '00000000-0000-0000-0000-000000000005';
+
+const loginDaten: object = {
+    username: 'admin',
+    password: 'p',
+};
 
 // -----------------------------------------------------------------------------
 // T e s t s
 // -----------------------------------------------------------------------------
-const path = PATHS.buecher;
+const path = PATHS.kunden;
+const loginPath = PATHS.login;
 let server: Server;
 
 // Test-Suite
-describe('GET /buecher/:id', () => {
+describe('DELETE /kunden', () => {
     // Testserver starten und dabei mit der DB verbinden
     beforeAll(async () => (server = await createTestserver()));
 
@@ -55,44 +58,54 @@ describe('GET /buecher/:id', () => {
         await new Promise(resolve => setTimeout(() => resolve(), 1000)); // eslint-disable-line @typescript-eslint/no-magic-numbers
     });
 
-    test('Buch zu vorhandener ID', async () => {
-        // when
-        const response = await request(server)
-            .get(`${path}/${idVorhanden}`)
+    test('Vorhandener Kunde loeschen', async () => {
+        // given: idDeleteVorhanden
+        let response = await request(server)
+            .post(`${loginPath}`)
+            .set('Content-type', 'application/x-www-form-urlencoded')
+            .send(loginDaten)
             .trustLocalhost();
+        const { token } = response.body;
 
-        // then
-        const { status, header, body } = response;
-        expect(status).to.be.equal(HttpStatus.OK);
-        expect(header['content-type']).to.match(/json/iu);
-        // response.body enthaelt ein JSON-Objekt mit Atom-Links
-        expect(body._links.self.href).to.endWith(`/${idVorhanden}`);
-    });
-
-    test('Kein Buch zu nicht-vorhandener ID', async () => {
         // when
-        const response = await request(server)
-            .get(`${path}/${idNichtVorhanden}`)
+        response = await request(server)
+            .delete(`${path}/${id}`)
+            .set('Authorization', `Bearer ${token}`)
             .trustLocalhost();
 
         // then
         const { status, body } = response;
-        expect(status).to.be.equal(HttpStatus.NOT_FOUND);
-        // Leerer Rumpf
-        // https://stackoverflow.com/questions/679915/how-do-i-test-for-an-empty-javascript-object
+        expect(status).to.be.equal(HttpStatus.NO_CONTENT);
         expect(Object.entries(body)).to.be.empty;
     });
 
-    test('Buch zu vorhandener ID mit ETag', async () => {
+    test('Kunde loeschen, aber ohne Token', async () => {
+        // given: idDeleteVorhanden
+
         // when
         const response = await request(server)
-            .get(`${path}/${idVorhanden}`)
-            .set('If-None-Match', '"0"')
+            .delete(`${path}/${id}`)
             .trustLocalhost();
 
         // then
         const { status, body } = response;
-        expect(status).to.be.equal(HttpStatus.NOT_MODIFIED);
+        expect(status).to.be.equal(HttpStatus.UNAUTHORIZED);
+        expect(Object.entries(body)).to.be.empty;
+    });
+
+    test('Kunde loeschen, aber mit falschem Token', async () => {
+        // given: geaendertesKunde
+        const falscherToken = 'x';
+
+        // when
+        const response = await request(server)
+            .delete(`${path}/${id}`)
+            .set('Authorization', `Bearer ${falscherToken}`)
+            .trustLocalhost();
+
+        // then
+        const { status, body } = response;
+        expect(status).to.be.equal(HttpStatus.UNAUTHORIZED);
         expect(Object.entries(body)).to.be.empty;
     });
 });

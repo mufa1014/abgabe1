@@ -17,8 +17,8 @@
 
 /* globals describe, expect, test, beforeAll, afterAll */
 
-import { BuchArt, Verlag } from '../../../src/buch/entity';
-import type { Buch } from '../../../src/buch/entity/types';
+import { KundeArt, Geschlecht } from '../../../src/kunde/entity';
+import type { Kunde } from '../../../src/kunde/entity/types';
 import { HttpStatus } from '../../../src/shared';
 import { PATHS } from '../../../src/app';
 import type { Server } from 'http';
@@ -34,45 +34,44 @@ import('chai-string').then(chaiString => chai.use(chaiString.default));
 // -----------------------------------------------------------------------------
 // T e s t d a t e n
 // -----------------------------------------------------------------------------
-const neuesBuch: Buch = {
-    titel: 'Neu',
-    rating: 1,
-    art: BuchArt.DRUCKAUSGABE,
-    verlag: Verlag.FOO_VERLAG,
-    preis: 99.99,
-    rabatt: 0.099,
-    lieferbar: true,
-    datum: '2016-02-28',
-    isbn: '0-0070-0644-6',
-    homepage: 'https://test.de/',
-    schlagwoerter: ['JAVASCRIPT', 'TYPESCRIPT'],
-    autoren: [{ nachname: 'Test', vorname: 'Theo' }],
+const neuesKunde: Kunde = {
+    vorname: 'Angela',
+    nachname: 'Merkel',
+    kundenart: KundeArt.GEWERBLICH,
+    geschlecht: Geschlecht.WOMEN,
+    hausnummer: 1,
+    plz: 10119 ,
+    aktiv: false,
+    registrierungsdatum: '2016-02-28',
+    strasse: 'Regierungsstrasse',
+    zusatzinfo: 'Bundeskanzler',
+    bestellungen: 'Mode',
 };
-const neuesBuchInvalid: object = {
-    titel: 'Blabla',
-    rating: -1,
-    art: 'UNSICHTBAR',
-    verlag: 'NO_VERLAG',
-    preis: 0,
-    rabatt: 0,
-    lieferbar: true,
-    datum: '2016-02-01',
-    isbn: 'falsche-ISBN',
-    autoren: [{ nachname: 'Test', vorname: 'Theo' }],
-    schlagwoerter: [],
+const neuesKundeInvalid: object = {
+    vorname: 'Bla',
+    nachname: 'Bla',
+    kundenart: 'Superunternehmer',
+    geschlecht: '-',
+    hausnummer: 0,
+    plz: 'strasse',
+    aktiv: false,
+    registrierungsdatum: '2016-02-28',
+    strasse: 'teststrasse',
+    zusatzinfo: '-',
+    bestellungen: '-',
 };
-const neuesBuchTitelExistiert: Buch = {
-    titel: 'Alpha',
-    rating: 1,
-    art: BuchArt.DRUCKAUSGABE,
-    verlag: Verlag.FOO_VERLAG,
-    preis: 99.99,
-    rabatt: 0.099,
-    lieferbar: true,
-    datum: '2016-02-28',
-    isbn: '0-0070-9732-8',
-    autoren: [{ nachname: 'Test', vorname: 'Theo' }],
-    schlagwoerter: ['JAVASCRIPT', 'TYPESCRIPT'],
+const neuesKundeNameExistiert: Kunde = {
+    vorname: 'Fabian',
+    nachname: 'Mueller',
+    kundenart: KundeArt.PRIVAT,
+    geschlecht: Geschlecht.MAN,
+    hausnummer: 18,
+    plz: 74626,
+    aktiv: true,
+    registrierungsdatum: '2016-02-28',
+    strasse: 'Bahnhofstrasse',
+    zusatzinfo: 'good buyer',
+    bestellungen: 'Buchlastig',
 };
 
 const loginDaten: object = {
@@ -83,12 +82,12 @@ const loginDaten: object = {
 // -----------------------------------------------------------------------------
 // T e s t s
 // -----------------------------------------------------------------------------
-const path = PATHS.buecher;
+const path = PATHS.kunden;
 const loginPath = PATHS.login;
 let server: Server;
 
 // Test-Suite
-describe('POST /buecher', () => {
+describe('POST /kunden', () => {
     // Testserver starten und dabei mit der DB verbinden
     beforeAll(async () => (server = await createTestserver()));
 
@@ -99,8 +98,8 @@ describe('POST /buecher', () => {
         await new Promise(resolve => setTimeout(() => resolve(), 1000)); // eslint-disable-line @typescript-eslint/no-magic-numbers
     });
 
-    test('Neues Buch', async () => {
-        // given: neuesBuch
+    test('Neuer Kunde', async () => {
+        // given: neuesKunde
         let response = await request(server)
             .post(`${loginPath}`)
             .set('Content-type', 'application/x-www-form-urlencoded')
@@ -112,7 +111,7 @@ describe('POST /buecher', () => {
         response = await request(server)
             .post(path)
             .set('Authorization', `Bearer ${token}`)
-            .send(neuesBuch)
+            .send(neuesKunde)
             .trustLocalhost();
 
         // then
@@ -134,8 +133,8 @@ describe('POST /buecher', () => {
         );
     });
 
-    test('Neues Buch mit ungueltigen Daten', async () => {
-        // given: neuesBuchInvalid
+    test('Neuer Kunde mit ungueltigen Daten', async () => {
+        // given: neuesKundeInvalid
         let response = await request(server)
             .post(`${loginPath}`)
             .set('Content-type', 'application/x-www-form-urlencoded')
@@ -147,26 +146,26 @@ describe('POST /buecher', () => {
         response = await request(server)
             .post(path)
             .set('Authorization', `Bearer ${token}`)
-            .send(neuesBuchInvalid)
+            .send(neuesKundeInvalid)
             .trustLocalhost();
 
         // then
         const { status, body } = response;
         expect(status).to.be.equal(HttpStatus.BAD_REQUEST);
-        const { art, rating, verlag, isbn } = body;
+        const { KundeArt, hausnummer, geschlecht, plz } = body;
 
-        expect(art).to.be.equal(
-            'Die Art eines Buches muss KINDLE oder DRUCKAUSGABE sein.',
+        expect(KundeArt).to.be.equal(
+            'Die Kundenart muss Privatkunde oder Gewerbekunde sein.',
         );
-        expect(rating).to.endWith('eine gueltige Bewertung.');
-        expect(verlag).to.be.equal(
-            'Der Verlag eines Buches muss FOO_VERLAG oder BAR_VERLAG sein.',
+        expect(hausnummer).to.endWith('eine gueltige Bewertung.');
+        expect(geschlecht).to.be.equal(
+            'Das Geschlecht eines Kundens muss M oder W sein.',
         );
-        expect(isbn).to.endWith('eine gueltige ISBN-Nummer.');
+        expect(plz).to.endWith('eine gueltige PLZ-Nummer.');
     });
 
-    test('Neues Buch, aber der Titel existiert bereits', async () => {
-        // given: neuesBuchInvalid
+    test('Neuer Kunde, aber der Name existiert bereits', async () => {
+        // given: neuesKundeInvalid
         let response = await request(server)
             .post(`${loginPath}`)
             .set('Content-type', 'application/x-www-form-urlencoded')
@@ -178,22 +177,22 @@ describe('POST /buecher', () => {
         response = await request(server)
             .post(path)
             .set('Authorization', `Bearer ${token}`)
-            .send(neuesBuchTitelExistiert)
+            .send(neuesKundeNameExistiert)
             .trustLocalhost();
 
         // then
         const { status, text } = response;
         expect(status).to.be.equal(HttpStatus.BAD_REQUEST);
-        expect(text).has.string('Titel');
+        expect(text).has.string('Name');
     });
 
-    test('Neues Buch, aber ohne Token', async () => {
-        // given: neuesBuch
+    test('Neuer Kunde, aber ohne Token', async () => {
+        // given: neuesKunde
 
         // when
         const response = await request(server)
             .post(path)
-            .send(neuesBuch)
+            .send(neuesKunde)
             .trustLocalhost();
 
         // then
@@ -202,15 +201,15 @@ describe('POST /buecher', () => {
         expect(Object.entries(body)).to.be.empty;
     });
 
-    test('Neues Buch, aber mit falschem Token', async () => {
-        // given: neuesBuch
+    test('Neuer Kunde, aber mit falschem Token', async () => {
+        // given: neuesKunde
         const falscherToken = 'x';
 
         // when
         const response = await request(server)
             .post(path)
             .set('Authorization', `Bearer ${falscherToken}`)
-            .send(neuesBuch)
+            .send(neuesKunde)
             .trustLocalhost();
 
         // then

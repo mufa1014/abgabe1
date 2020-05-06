@@ -17,7 +17,7 @@
 
 export const kunden = [
     {
-        _id: '00000000-0000-0000-0000-000000000010',
+        _id: '00000000-0000-0000-0000-000000000001',
         vorname: 'Fabian',
         nachname: 'Mueller',
         kundenart: 'Privatkunde',
@@ -34,7 +34,7 @@ export const kunden = [
         updatedAt: new Date('2019-04-01'),
     },
     {
-        _id: '00000000-0000-0000-0000-000000000011',
+        _id: '00000000-0000-0000-0000-000000000002',
         vorname: 'Johanna',
         nachname: 'Sperrer',
         kundenart: 'Gewerbekunde',
@@ -51,7 +51,7 @@ export const kunden = [
         updatedAt: new Date('2019-04-01'),
     },
     {
-        _id: '00000000-0000-0000-0000-000000000012',
+        _id: '00000000-0000-0000-0000-000000000003',
         vorname: 'Mario',
         nachname: 'Goetze',
         kundenart: 'Privatkunde',
@@ -68,7 +68,7 @@ export const kunden = [
         updatedAt: new Date('2019-04-01'),
     },
     {
-        _id: '00000000-0000-0000-0000-000000000013',
+        _id: '00000000-0000-0000-0000-000000000004',
         vorname: 'Melissa',
         nachname: 'Naschenweng',
         kundenart: 'Gewerbekunde',
@@ -85,7 +85,7 @@ export const kunden = [
         updatedAt: new Date('2019-04-01'),
     },
     {
-        _id: '00000000-0000-0000-0000-000000000014',
+        _id: '00000000-0000-0000-0000-000000000005',
         vorname: 'Oliver',
         nachname: 'Kahn',
         kundenart: 'Privatkunde',

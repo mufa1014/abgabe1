@@ -19,17 +19,8 @@
 
 // REST-Schnittstelle testen: Supertest oder (primitiver!) request
 
-// import dotenv from 'dotenv';
-// const result = dotenv.config();
-// if (result.error !== undefined) {
-//     throw result.error;
-// }
-// console.info(`.env: ${JSON.stringify(result.parsed)}`);
-// const dev = result?.parsed?.NODE_ENV?.startsWith('dev') ?? false;
-
 import { HttpStatus } from '../../../src/shared';
 import { PATHS } from '../../../src/app';
-import type { BuchData } from '../../../src/buch/entity/types';
 import type { Server } from 'http';
 import chai from 'chai';
 import { createTestserver } from '../../createTestserver';
@@ -41,13 +32,20 @@ const { expect } = chai;
 import('chai-string').then(chaiString => chai.use(chaiString.default));
 
 // -----------------------------------------------------------------------------
-// T e s t s e r v e r   m i t   H T T P   u n d   R a n d o m   P o r t
+// T e s t d a t e n
 // -----------------------------------------------------------------------------
-const path = PATHS.buecher;
+const idVorhanden = '00000000-0000-0000-0000-000000000001';
+const idNichtVorhanden = '00000000-0000-0000-0000-000000000999';
+
+// -----------------------------------------------------------------------------
+// T e s t s
+// -----------------------------------------------------------------------------
+const path = PATHS.kunden;
 let server: Server;
 
 // Test-Suite
-describe('GET /buecher', () => {
+describe('GET /kunden/:id', () => {
+    // Testserver starten und dabei mit der DB verbinden
     beforeAll(async () => (server = await createTestserver()));
 
     afterAll(async () => {
@@ -57,94 +55,44 @@ describe('GET /buecher', () => {
         await new Promise(resolve => setTimeout(() => resolve(), 1000)); // eslint-disable-line @typescript-eslint/no-magic-numbers
     });
 
-    test('Alle Buecher', async () => {
-        // when
-        const response = await request(server).get(path).trustLocalhost();
-
-        // then
-        const { status, header, body } = response;
-        expect(status).to.be.equal(HttpStatus.OK);
-        expect(header['content-type']).to.match(/json/iu);
-        // https://jestjs.io/docs/en/expect
-        // JSON-Array mit mind. 1 JSON-Objekt
-        expect(body).not.to.be.empty;
-    });
-
-    test('Buecher mit einem Titel, der ein "a" enthaelt', async () => {
-        // given
-        const teilTitel = 'a';
-
+    test('Kunde zu vorhandener ID', async () => {
         // when
         const response = await request(server)
-            .get(`${path}?titel=${teilTitel}`)
+            .get(`${path}/${idVorhanden}`)
             .trustLocalhost();
 
         // then
         const { status, header, body } = response;
         expect(status).to.be.equal(HttpStatus.OK);
         expect(header['content-type']).to.match(/json/iu);
-        // response.body ist ein JSON-Array mit mind. 1 JSON-Objekt
-        expect(body).not.to.be.empty;
-
-        // Jedes Buch hat einen Titel mit dem Teilstring 'a'
-        body.map((buch: BuchData) => buch.titel).forEach((titel: string) =>
-            expect(titel).to.have.string(teilTitel),
-        );
+        // response.body enthaelt ein JSON-Objekt mit Atom-Links
+        expect(body._links.self.href).to.endWith(`/${idVorhanden}`);
     });
 
-    test('Keine Buecher mit einem Titel, der "XX" enthaelt', async () => {
-        // given
-        const teilTitel = 'XX';
-
+    test('Kein Kunde zu nicht-vorhandener ID', async () => {
         // when
         const response = await request(server)
-            .get(`${path}?titel=${teilTitel}`)
+            .get(`${path}/${idNichtVorhanden}`)
             .trustLocalhost();
 
         // then
         const { status, body } = response;
         expect(status).to.be.equal(HttpStatus.NOT_FOUND);
         // Leerer Rumpf
+        // https://stackoverflow.com/questions/679915/how-do-i-test-for-an-empty-javascript-object
         expect(Object.entries(body)).to.be.empty;
     });
 
-    test('Mind. 1 Buch mit dem Schlagwort "javascript"', async () => {
-        // given
-        const schlagwort = 'javascript';
-
+    test('Kunde zu vorhandener ID mit ETag', async () => {
         // when
         const response = await request(server)
-            .get(`${path}?${schlagwort}=true`)
-            .trustLocalhost();
-
-        // then
-        const { status, header, body } = response;
-        expect(status).to.be.equal(HttpStatus.OK);
-        expect(header['content-type']).to.match(/json/iu);
-        // JSON-Array mit mind. 1 JSON-Objekt
-        expect(body).not.to.be.empty;
-
-        // Jedes Buch hat im Array der Schlagwoerter "javascript"
-        body.map(
-            (buch: BuchData) => buch.schlagwoerter,
-        ).forEach((s: Array<string>) =>
-            expect(s).to.include(schlagwort.toUpperCase()),
-        );
-    });
-
-    test('Keine Buecher mit dem Schlagwort "csharp"', async () => {
-        // given
-        const schlagwort = 'csharp';
-
-        // when
-        const response = await request(server)
-            .get(`${path}?${schlagwort}=true`)
+            .get(`${path}/${idVorhanden}`)
+            .set('If-None-Match', '"0"')
             .trustLocalhost();
 
         // then
         const { status, body } = response;
-        expect(status).to.be.equal(HttpStatus.NOT_FOUND);
-        // Leerer Rumpf
+        expect(status).to.be.equal(HttpStatus.NOT_MODIFIED);
         expect(Object.entries(body)).to.be.empty;
     });
 });

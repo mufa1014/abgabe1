@@ -17,7 +17,7 @@
 
 /* globals describe, expect, test, beforeAll, afterAll */
 
-import { BuchArt, Verlag } from '../../../src/buch/entity';
+import { KundeArt, Geschlecht } from '../../../src/kunde/entity';
 import { HttpStatus } from '../../../src/shared';
 import { PATHS } from '../../../src/app';
 import type { Server } from 'http';
@@ -33,48 +33,47 @@ import('chai-string').then(chaiString => chai.use(chaiString.default));
 // -----------------------------------------------------------------------------
 // T e s t d a t e n
 // -----------------------------------------------------------------------------
-const geaendertesBuch: object = {
-    // isbn wird nicht geaendet
-    titel: 'Geaendert',
-    rating: 1,
-    art: BuchArt.DRUCKAUSGABE,
-    verlag: Verlag.FOO_VERLAG,
-    preis: 33.33,
-    rabatt: 0.033,
-    lieferbar: true,
-    datum: '2016-02-03',
-    homepage: 'https://test.te',
-    autoren: [{ nachname: 'Gamma', vorname: 'Claus' }],
-    schlagwoerter: ['JAVASCRIPT', 'TYPESCRIPT'],
+const geaendertesKunde: object = {
+    // plz wird nicht geaendet
+    vorname: 'Annkatrin',
+    nachname: 'Goetze',
+    kundenart: KundeArt.GEWERBLICH,
+    geschlecht: Geschlecht.WOMEN,
+    hausnummer: 20,
+    aktiv: false,
+    registrierungsdatum: '2016-02-03',
+    strasse: 'Modelstrasse',
+    zusatzinfo: 'special',
+    bestellungen: 'Modeartikel',
 };
 const idVorhanden = '00000000-0000-0000-0000-000000000003';
 
-const geaendertesBuchIdNichtVorhanden: object = {
-    titel: 'Nichtvorhanden',
-    rating: 1,
-    art: BuchArt.DRUCKAUSGABE,
-    verlag: Verlag.FOO_VERLAG,
-    preis: 33.33,
-    rabatt: 0.033,
-    lieferbar: true,
-    datum: '2016-02-03',
-    autoren: [{ nachname: 'Gamma', vorname: 'Claus' }],
-    schlagwoerter: ['JAVASCRIPT', 'TYPESCRIPT'],
+const geaendertesKundeIdNichtVorhanden: object = {
+    vorname: 'NichtVorhanden',
+    nachname: 'NichtVorhanden',
+    kundenart: KundeArt.GEWERBLICH,
+    geschlecht: Geschlecht.WOMEN,
+    hausnummer: 20,
+    aktiv: false,
+    registrierungsdatum: '2016-02-03',
+    strasse: 'Modelstrasse',
+    zusatzinfo: 'special',
+    bestellungen: 'Modeartikel',
 };
 const idNichtVorhanden = '00000000-0000-0000-0000-000000000999';
 
-const geaendertesBuchInvalid: object = {
-    titel: 'Alpha',
-    rating: -1,
-    art: 'UNSICHTBAR',
-    verlag: 'NO_VERLAG',
-    preis: 0.01,
-    rabatt: 0,
-    lieferbar: true,
-    datum: '2016-02-01',
-    isbn: 'falsche-ISBN',
-    autoren: [{ nachname: 'Test', vorname: 'Theo' }],
-    schlagwoerter: [],
+const geaendertesKundeInvalid: object = {
+    vorname: 'Alpha',
+    nachname: 1,
+    geschlecht: 'UNSICHTBAR',
+    kundenart: 'NO_VERLAG',
+    hausnummer: 2,
+    aktiv: true,
+    registrierungsdatum: '2016-02-01',
+    plz: 'falsche-PLZ',
+    strasse: 'Saebenerstrasse',
+    zusatzinfo: 'nothing special',
+    bestellungen: 'Sportartikel',
 };
 
 const loginDaten: object = {
@@ -85,12 +84,12 @@ const loginDaten: object = {
 // -----------------------------------------------------------------------------
 // T e s t s
 // -----------------------------------------------------------------------------
-const path = PATHS.buecher;
+const path = PATHS.kunden;
 const loginPath = PATHS.login;
 let server: Server;
 
 // Test-Suite
-describe('PUT /buecher/:id', () => {
+describe('PUT /kunden/:id', () => {
     // Testserver starten und dabei mit der DB verbinden
     beforeAll(async () => (server = await createTestserver()));
 
@@ -101,8 +100,8 @@ describe('PUT /buecher/:id', () => {
         await new Promise(resolve => setTimeout(() => resolve(), 1000)); // eslint-disable-line @typescript-eslint/no-magic-numbers
     });
 
-    test('Vorhandenes Buch aendern', async () => {
-        // given: geaendertesBuch
+    test('Vorhandener Kunde aendern', async () => {
+        // given: geaendertesKunde
         let response = await request(server)
             .post(`${loginPath}`)
             .set('Content-type', 'application/x-www-form-urlencoded')
@@ -115,7 +114,7 @@ describe('PUT /buecher/:id', () => {
             .put(`${path}/${idVorhanden}`)
             .set('Authorization', `Bearer ${token}`)
             .set('If-Match', '"0"')
-            .send(geaendertesBuch)
+            .send(geaendertesKunde)
             .trustLocalhost();
 
         // then
@@ -124,8 +123,8 @@ describe('PUT /buecher/:id', () => {
         expect(Object.entries(body)).to.be.empty;
     });
 
-    test('Nicht-vorhandenes Buch aendern', async () => {
-        // given: geaendertesBuchIdNichtVorhanden
+    test('Nicht-vorhandener Kunde aendern', async () => {
+        // given: geaendertesKundeIdNichtVorhanden
         let response = await request(server)
             .post(`${loginPath}`)
             .set('Content-type', 'application/x-www-form-urlencoded')
@@ -138,7 +137,7 @@ describe('PUT /buecher/:id', () => {
             .put(`${path}/${idNichtVorhanden}`)
             .set('Authorization', `Bearer ${token}`)
             .set('If-Match', '"0"')
-            .send(geaendertesBuchIdNichtVorhanden)
+            .send(geaendertesKundeIdNichtVorhanden)
             .trustLocalhost();
 
         // then
@@ -147,8 +146,8 @@ describe('PUT /buecher/:id', () => {
         expect(Object.entries(body)).to.be.empty;
     });
 
-    test('Vorhandenes Buch aendern, aber mit ungueltigen Daten', async () => {
-        // given: geaendertesBuchInvalid
+    test('Vorhandener Kunde aendern, aber mit ungueltigen Daten', async () => {
+        // given: geaendertesKundeInvalid
         let response = await request(server)
             .post(`${loginPath}`)
             .set('Content-type', 'application/x-www-form-urlencoded')
@@ -161,26 +160,26 @@ describe('PUT /buecher/:id', () => {
             .put(`${path}/${idVorhanden}`)
             .set('Authorization', `Bearer ${token}`)
             .set('If-Match', '"0"')
-            .send(geaendertesBuchInvalid)
+            .send(geaendertesKundeInvalid)
             .trustLocalhost();
 
         // then
         const { status, body } = response;
         expect(status).to.be.equal(HttpStatus.BAD_REQUEST);
-        const { art, rating, verlag, isbn } = body;
+        const { KundeArt, hausnummer, geschlecht, plz } = body;
 
-        expect(art).to.be.equal(
-            'Die Art eines Buches muss KINDLE oder DRUCKAUSGABE sein.',
+        expect(KundeArt).to.be.equal(
+            'Die Kundenart muss Privatkunde oder Gewerbekunde sein.',
         );
-        expect(rating).to.endWith('eine gueltige Bewertung.');
-        expect(verlag).to.be.equal(
-            'Der Verlag eines Buches muss FOO_VERLAG oder BAR_VERLAG sein.',
+        expect(hausnummer).to.endWith('eine gueltige Hausnummer.');
+        expect(geschlecht).to.be.equal(
+            'Das Geschlecht eines Kundens muss M oder W sein.',
         );
-        expect(isbn).to.endWith('eine gueltige ISBN-Nummer.');
+        expect(plz).to.endWith('eine gueltige PLZ-Nummer.');
     });
 
-    test('Vorhandenes Buch aendern, aber ohne Versionsnummer', async () => {
-        // given: geaendertesBuchInvalid
+    test('Vorhandener Kunde aendern, aber ohne Versionsnummer', async () => {
+        // given: geaendertesKundeInvalid
         let response = await request(server)
             .post(`${loginPath}`)
             .set('Content-type', 'application/x-www-form-urlencoded')
@@ -193,7 +192,7 @@ describe('PUT /buecher/:id', () => {
             .put(`${path}/${idVorhanden}`)
             .set('Authorization', `Bearer ${token}`)
             .set('Accept', 'text/plain')
-            .send(geaendertesBuch)
+            .send(geaendertesKunde)
             .trustLocalhost();
 
         // then
@@ -202,8 +201,8 @@ describe('PUT /buecher/:id', () => {
         expect(text).to.be.equal('Versionsnummer fehlt');
     });
 
-    test('Vorhandenes Buch aendern, aber mit alter Versionsnummer', async () => {
-        // given: geaendertesBuchInvalid
+    test('Vorhandener Kunde aendern, aber mit alter Versionsnummer', async () => {
+        // given: geaendertesKundeInvalid
         let response = await request(server)
             .post(`${loginPath}`)
             .set('Content-type', 'application/x-www-form-urlencoded')
@@ -217,7 +216,7 @@ describe('PUT /buecher/:id', () => {
             .set('Authorization', `Bearer ${token}`)
             .set('If-Match', '"-1"')
             .set('Accept', 'text/plain')
-            .send(geaendertesBuch)
+            .send(geaendertesKunde)
             .trustLocalhost();
 
         // then
@@ -226,14 +225,14 @@ describe('PUT /buecher/:id', () => {
         expect(text).to.have.string('Die Versionsnummer');
     });
 
-    test('Vorhandenes Buch aendern, aber ohne Token', async () => {
-        // given: geaendertesBuch
+    test('Vorhandener Kunde aendern, aber ohne Token', async () => {
+        // given: geaendertesKunde
 
         // when
         const response = await request(server)
             .put(`${path}/${idVorhanden}`)
             .set('If-Match', '"0"')
-            .send(geaendertesBuch)
+            .send(geaendertesKunde)
             .trustLocalhost();
 
         // then
@@ -242,8 +241,8 @@ describe('PUT /buecher/:id', () => {
         expect(Object.entries(body)).to.be.empty;
     });
 
-    test('Vorhandenes Buch aendern, aber mit falschem Token', async () => {
-        // given: geaendertesBuch
+    test('Vorhandener Kunde aendern, aber mit falschem Token', async () => {
+        // given: geaendertesKunde
         const falscherToken = 'x';
 
         // when
@@ -251,7 +250,7 @@ describe('PUT /buecher/:id', () => {
             .put(`${path}/${idVorhanden}`)
             .set('Authorization', `Bearer ${falscherToken}`)
             .set('If-Match', '"0"')
-            .send(geaendertesBuch)
+            .send(geaendertesKunde)
             .trustLocalhost();
 
         // then
