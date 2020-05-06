@@ -33,7 +33,7 @@
           <thead class="thead-default">
             <tr>
               <th>ID</th>
-              <th>Titel</th>
+              <th>Vorname</th>
               <th>Verlag</th>
             </tr>
           </thead>
@@ -42,7 +42,7 @@
             <% buecher.forEach((kunde) => { %>
             <tr>
               <td><%= kunde._id %></td>
-              <td><%= kunde.titel %></td>
+              <td><%= kunde.vorname %></td>
               <td><%= kunde.verlag %></td>
             </tr>
             <% }); %>

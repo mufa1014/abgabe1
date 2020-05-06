@@ -27,7 +27,7 @@ import { saveReadable } from './gridfs';
 const createIndex = async (collection: Collection) => {
     // http://mongodb.github.io/node-mongodb-native/3.5/api/Collection.html#createIndex
     // Beachte: bei createIndexes() gelten die Optionen fuer alle Indexe gelten
-    let index = await collection.createIndex('titel', { unique: true });
+    let index = await collection.createIndex('vorname', { unique: true });
     logger.warn(`Der Index ${index} wurde angelegt.`);
     index = await collection.createIndex('isbn', { unique: true });
     logger.warn(`Der Index ${index} wurde angelegt.`);
@@ -71,7 +71,7 @@ export const populateDB = async (dev?: boolean) => {
     const { db, client } = await connectMongoDB();
 
     // http://mongodb.github.io/node-mongodb-native/3.5/api/Db.html#dropCollection
-    const collectionName = 'Buch';
+    const collectionName = 'Kunde';
     let dropped = false;
     try {
         dropped = await db.dropCollection(collectionName);

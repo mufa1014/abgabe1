@@ -65,9 +65,9 @@ kundeSchema.plugin(optimistic);
 // Methoden zum Schema hinzufuegen, damit sie spaeter beim Model (s.u.)
 // verfuegbar sind, was aber bei kunde.check() zu eines TS-Syntaxfehler fuehrt:
 // schema.methods.check = () => {...}
-// schema.statics.findByTitel =
-//     (titel: string, cb: Function) =>
-//         return this.find({titel: titel}, cb)
+// schema.statics.findByVorname =
+//     (vorname: string, cb: Function) =>
+//         return this.find({vorname: vorname}, cb)
 
 // Ein Model ist ein uebersetztes Schema und stellt die CRUD-Operationen fuer
 // die Dokumente bereit, d.h. das Pattern "Active Record" wird realisiert.

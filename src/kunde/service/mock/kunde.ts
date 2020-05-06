@@ -19,7 +19,7 @@ import { Geschlecht, KundeArt } from '../../entity';
 import type { KundeData } from '../../entity/types';
 
 export const kunde: KundeData = {
-    _id: '00000000-0000-0000-0000-000000000001',
+    _id: '00000000-0000-0000-0000-000000000020',
     vorname: 'Fabian',
     nachname: 'Mueller',
     kundenart: KundeArt.PRIVAT,
@@ -39,7 +39,7 @@ export const kunde: KundeData = {
 export const kunden: Array<KundeData> = [
     kunde,
     {
-        _id: '00000000-0000-0000-0000-000000000001',
+        _id: '00000000-0000-0000-0000-000000000021',
         vorname: 'Johanna',
         nachname: 'Sperrer',
         kundenart: KundeArt.GEWERBLICH,

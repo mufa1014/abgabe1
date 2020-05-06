@@ -37,11 +37,11 @@ export class ValidationError extends Error {
 }
 
 export class VornameExistsError extends Error {
-    readonly name = 'TitelExistsError';
+    readonly name = 'VornameExistsError';
 
     constructor(public readonly message: string) {
         super();
-        logger.debug(`TitelExistsError.constructor(): ${message}`);
+        logger.debug(`VornameExistsError.constructor(): ${message}`);
     }
 }
 

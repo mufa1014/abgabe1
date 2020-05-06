@@ -57,7 +57,7 @@ const deleteKunde = async (id: string) => {
 
 // Queries passend zu "type Query" in typeDefs.ts
 const query: IResolverObject = {
-    // Kunden suchen, ggf. mit Titel als Suchkriterium
+    // Kunden suchen, ggf. mit Vorname als Suchkriterium
     kunden: (_: unknown, { vorname }: VornameCriteria) => findKunden(vorname),
     // Ein Kunde mit einer bestimmten ID suchen
     kunde: (_: unknown, { id }: IdCriteria) => kundeService.findById(id),
