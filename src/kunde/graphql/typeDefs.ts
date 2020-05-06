@@ -29,45 +29,43 @@
  *  Mutation: Signatur der Schreib-Methoden
  */
 export const typeDefs = `
-    enum Art {
-        DRUCKAUSGABE
-        KINDLE
+    enum KundeArt {
+        Privatkunde
+        Gewerbekunde
     }
 
-    enum Verlag {
-        FOO_VERLAG
-        BAR_VERLAG
+    enum Geschlecht {
+        M
+        W
     }
 
     type Kunde {
         _id: ID!
-        titel: String!
-        rating: Int
-        art: Art
-        verlag: Verlag!
-        preis: Float
-        rabatt: Float
-        lieferbar: Boolean
-        datum: String
-        isbn: String
-        homepage: String
-        schlagwoerter: [String]
+        vorname: String!
+        nachname: String!
+        kundenart: KundeArt
+        geschlecht: Geschlecht!
+        hausnummer: Int
+        plz: Int
+        aktiv: Boolean
+        registrierungsdatum: String
+        strasse: String
+        zusatzinfo: String
         version: Int
     }
 
     type Query {
-        kunden(titel: String): [Kunde]
+        kunden(vorname: String): [Kunde]
         kunde(id: ID!): Kunde
     }
 
     type Mutation {
-        createKunde(titel: String!, rating: Int, art: String, verlag: String!
-            preis: Float, rabatt: Float, lieferbar: Boolean, datum: String,
-            isbn: String, homepage: String, schlagwoerter: [String]): Kunde
-        updateKunde(_id: ID, titel: String!, rating: Int, art: String,
-            verlag: String!, preis: Float, rabatt: Float, lieferbar: Boolean,
-            datum: String, isbn: String, homepage: String,
-            schlagwoerter: [String], version: Int): Kunde
+        createKunde(vorname: String!, nachname: String!, kundenart: String, geschlecht: String!
+            hausnummer: Int, plz: Int, aktiv: Boolean, registrierungsdatum: String,
+            strasse: String, zusatzinfo: String): Kunde
+        updateKunde(_id: ID, vorname: String!, nachname: String!, kundenart: String,
+            geschlecht: String!, hausnummer: Int, plz: Int, aktiv: Boolean,
+            registrierungsdatum: String, strasse: String, zusatzinfo: String, version: Int): Kunde
         deleteKunde(id: ID!): Boolean
     }
 `;

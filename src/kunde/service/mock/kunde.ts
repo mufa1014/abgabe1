@@ -15,32 +15,22 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { KundeArt, Verlag } from '../../entity';
+import { Geschlecht, KundeArt } from '../../entity';
 import type { KundeData } from '../../entity/types';
 
 export const kunde: KundeData = {
     _id: '00000000-0000-0000-0000-000000000001',
-    titel: 'Alpha',
-    rating: 4,
-    art: KundeArt.DRUCKAUSGABE,
-    verlag: Verlag.FOO_VERLAG,
-    preis: 11.1,
-    rabatt: 0.011,
-    lieferbar: true,
-    datum: new Date('2018-02-01T00:00:00.000Z'),
-    isbn: '000-0-00000-000-1',
-    homepage: 'https://acme.at/',
-    schlagwoerter: ['JAVASCRIPT'],
-    autoren: [
-        {
-            nachname: 'Alpha',
-            vorname: 'Adriana',
-        },
-        {
-            nachname: 'Alpha',
-            vorname: 'Alfred',
-        },
-    ],
+    vorname: 'Fabian',
+    nachname: 'Mueller',
+    kundenart: KundeArt.PRIVAT,
+    geschlecht: Geschlecht.MAN,
+    hausnummer: 18,
+    plz: 74626,
+    aktiv: true,
+    registrierungsdatum: new Date('2019-02-01T00:00:00.000Z'),
+    strasse: 'Bahnhofstrasse',
+    zusatzinfo: 'good buyer',
+    bestellungen: 'Buchlastig',
     __v: 0,
     createdAt: 0,
     updatedAt: 0,
@@ -49,24 +39,18 @@ export const kunde: KundeData = {
 export const kunden: Array<KundeData> = [
     kunde,
     {
-        _id: '00000000-0000-0000-0000-000000000002',
-        titel: 'Beta',
-        rating: 2,
-        art: KundeArt.KINDLE,
-        verlag: Verlag.FOO_VERLAG,
-        preis: 22.2,
-        rabatt: 0.022,
-        lieferbar: true,
-        datum: new Date('2018-02-02T00:00:00.000Z'),
-        isbn: '000-0-00000-000-2',
-        homepage: 'https://acme.biz/',
-        schlagwoerter: ['TYPESCRIPT'],
-        autoren: [
-            {
-                nachname: 'Beta',
-                vorname: 'Brunhilde',
-            },
-        ],
+        _id: '00000000-0000-0000-0000-000000000001',
+        vorname: 'Johanna',
+        nachname: 'Sperrer',
+        kundenart: KundeArt.GEWERBLICH,
+        geschlecht: Geschlecht.WOMEN,
+        hausnummer: 150,
+        plz: 71665,
+        aktiv: false,
+        registrierungsdatum: new Date('2017-02-01T00:00:00.000Z'),
+        strasse: 'Hauptstrasse',
+        zusatzinfo: 'bad buyer',
+        bestellungen: 'Möbellastig',
         __v: 0,
         createdAt: 0,
         updatedAt: 0,

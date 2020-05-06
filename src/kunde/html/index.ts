@@ -18,8 +18,8 @@
 import type { Request, Response } from 'express';
 
 export const index = (_: Request, res: Response) => {
-    res.render('index', { title: 'Beispiel' });
+    res.render('index', { vorname: 'Beispiel' });
 };
 
-export * from './neues-kunde';
+export * from './neuer-kunde';
 export * from './suche';

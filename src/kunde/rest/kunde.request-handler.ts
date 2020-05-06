@@ -18,12 +18,12 @@
  */
 import { HttpStatus, getBaseUri, logger, mimeConfig } from '../../shared';
 import {
-    IsbnExistsError,
     KundeNotExistsError,
     KundeService,
-    TitelExistsError,
+    PlzExistsError,
     ValidationError,
     VersionInvalidError,
+    VornameExistsError,
 } from '../service';
 import type { Request, Response } from 'express';
 import JSON5 from 'json5';
@@ -95,7 +95,7 @@ export class KundeRequestHandler {
     }
 
     async find(req: Request, res: Response) {
-        // z.B. https://.../kunde?titel=Alpha
+        // z.B. https://.../kunde?vorname=Alpha
         const { query } = req;
         logger.debug(
             `KundeRequestHandler.find(): queryParams=${JSON5.stringify(query)}`,
@@ -238,7 +238,10 @@ export class KundeRequestHandler {
             return;
         }
 
-        if (err instanceof TitelExistsError || err instanceof IsbnExistsError) {
+        if (
+            err instanceof VornameExistsError ||
+            err instanceof PlzExistsError
+        ) {
             const { name, message } = err;
             logger.debug(
                 `KundeRequestHandler.handleCreateError(): err.name=${name}, message=${message}`,
@@ -295,7 +298,7 @@ export class KundeRequestHandler {
         if (
             err instanceof VersionInvalidError ||
             err instanceof KundeNotExistsError ||
-            err instanceof TitelExistsError
+            err instanceof VornameExistsError
         ) {
             const { name, message } = err;
             logger.debug(

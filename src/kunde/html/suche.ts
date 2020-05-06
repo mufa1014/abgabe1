@@ -22,5 +22,5 @@ const kundeService = new KundeService();
 
 export const suche = async (_: Request, res: Response) => {
     const kunden = await kundeService.find();
-    res.render('suche', { title: 'Suche', kunden });
+    res.render('suche', { vorname: 'Suche', kunden });
 };

@@ -34,7 +34,7 @@ export class KundeServiceMock {
 
     async create(kundeData: Kunde) {
         kundeData._id = uuid();
-        logger.info(`Neues Kunde: ${JSON5.stringify(kundeData)}`);
+        logger.info(`Neuer Kunde: ${JSON5.stringify(kundeData)}`);
         return kundeData;
     }
 
@@ -42,12 +42,12 @@ export class KundeServiceMock {
         if (kundeData.__v !== undefined) {
             kundeData.__v++;
         }
-        logger.info(`Aktualisiertes Kunde: ${JSON5.stringify(kundeData)}`);
+        logger.info(`Aktualisierte Kunde: ${JSON5.stringify(kundeData)}`);
         return Promise.resolve(kundeData);
     }
 
     async remove(id: string) {
-        logger.info(`ID des geloeschten Kundees: ${id}`);
+        logger.info(`ID des geloeschten Kunden: ${id}`);
         return true;
     }
 }

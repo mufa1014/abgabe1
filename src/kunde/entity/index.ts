@@ -15,6 +15,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-export { KundeArt, Verlag } from './kunde';
+export { KundeArt, Geschlecht } from './kunde';
 export { kundeSchema, KundeModel } from './kunde.model';
 export { validateKunde } from './validateKunde';

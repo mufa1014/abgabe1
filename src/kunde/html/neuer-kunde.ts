@@ -18,5 +18,5 @@
 import type { Request, Response } from 'express';
 
 export const neuesKunde = (_: Request, res: Response) => {
-    res.render('neues-kunde', { title: 'Neues Kunde' });
+    res.render('neuer-kunde', { vorname: 'Neuer Kunde' });
 };

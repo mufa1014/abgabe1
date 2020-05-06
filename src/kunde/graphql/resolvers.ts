@@ -25,13 +25,13 @@ import { logger } from '../../shared';
 
 const kundeService = new KundeService();
 
-const findKunden = (titel: string) => {
-    const suchkriterium = titel === undefined ? {} : { titel };
+const findKunden = (vorname: string) => {
+    const suchkriterium = vorname === undefined ? {} : { vorname };
     return kundeService.find(suchkriterium);
 };
 
-interface TitelCriteria {
-    titel: string;
+interface VornameCriteria {
+    vorname: string;
 }
 
 interface IdCriteria {
@@ -39,13 +39,13 @@ interface IdCriteria {
 }
 
 const createKunde = (kunde: Kunde) => {
-    kunde.datum = new Date(kunde.datum as string);
+    kunde.registrierungsdatum = new Date(kunde.registrierungsdatum as string);
     return kundeService.create(kunde);
 };
 
 const updateKunde = async (kunde: Kunde) => {
     const version = kunde.__v ?? 0;
-    kunde.datum = new Date(kunde.datum as string);
+    kunde.registrierungsdatum = new Date(kunde.registrierungsdatum as string);
     const kundeUpdated = await kundeService.update(kunde, version.toString());
     logger.debug(`resolvers updateKunde(): Versionsnummer: ${kunde.__v}`);
     return kundeUpdated;
@@ -58,7 +58,7 @@ const deleteKunde = async (id: string) => {
 // Queries passend zu "type Query" in typeDefs.ts
 const query: IResolverObject = {
     // Kunden suchen, ggf. mit Titel als Suchkriterium
-    kunden: (_: unknown, { titel }: TitelCriteria) => findKunden(titel),
+    kunden: (_: unknown, { vorname }: VornameCriteria) => findKunden(vorname),
     // Ein Kunde mit einer bestimmten ID suchen
     kunde: (_: unknown, { id }: IdCriteria) => kundeService.findById(id),
 };

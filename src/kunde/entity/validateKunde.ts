@@ -17,74 +17,71 @@
 
 import type { Document } from 'mongoose';
 import { KundeData } from './kunde';
-import { MAX_RATING } from '../../shared';
 import validator from 'validator';
 
-const { isUUID, isURL, isISBN } = validator;
+const { isUUID, isPostalCode } = validator;
 
 export interface ValidationErrorMsg {
     id?: string;
-    titel?: string;
-    art?: string;
-    rating?: string;
-    verlag?: string;
-    isbn?: string;
-    homepage?: string;
+    vorname?: string;
+    nachname?: string;
+    kundenart?: string;
+    hausnummer?: string;
+    geschlecht?: string;
+    plz?: string;
 }
 
 /* eslint-disable no-null/no-null */
 export const validateKunde = (kunde: Document) => {
     const err: ValidationErrorMsg = {};
-    const { titel, art, rating, verlag, isbn, homepage } = kunde as Document &
-        KundeData;
+    const {
+        vorname,
+        nachname,
+        kundenart,
+        hausnummer,
+        geschlecht,
+        plz,
+    } = kunde as Document & KundeData;
 
     const kundeDocument = kunde;
     if (!kundeDocument.isNew && !isUUID(kundeDocument._id)) {
         err.id = 'Das Kunde hat eine ungueltige ID.';
     }
 
-    if (titel === undefined || titel === null || titel === '') {
-        err.titel = 'Ein Kunde muss einen Titel haben.';
-    } else if (!/^\w.*/u.test(titel)) {
-        err.titel =
-            'Ein Kundetitel muss mit einem Kundestaben, einer Ziffer oder _ beginnen.';
+    if (vorname === undefined || vorname === null || vorname === '') {
+        err.vorname = 'Ein Kunde muss einen Vornamen haben.';
+    } else if (!/^\w.*/u.test(vorname)) {
+        err.vorname = 'Ein Kundenvorname muss mit einem Buchstaben beginnen.';
     }
-    if (art === undefined || art === null || art === '') {
-        err.art = 'Die Art eines Kundees muss gesetzt sein';
-    } else if (art !== 'KINDLE' && art !== 'DRUCKAUSGABE') {
-        err.art = 'Die Art eines Kundees muss KINDLE oder DRUCKAUSGABE sein.';
+    if (nachname === undefined || nachname === null || nachname === '') {
+        err.nachname = 'Ein Kunde muss einen Nachnamen haben.';
+    } else if (!/^\w.*/u.test(nachname)) {
+        err.nachname = 'Ein Kundennachname muss mit einem Buchstaben beginnen.';
+    }
+    if (kundenart === undefined || kundenart === null || kundenart === '') {
+        err.kundenart = 'Dem Kundenmuss eine Kundenart zugewiesen sein';
+    } else if (kundenart !== 'Privatkunde' && kundenart !== 'Gewerbekunde') {
+        err.kundenart =
+            'Die Kundenart muss Privatkunde oder Gewerbekunde sein.';
+    }
+    if (hausnummer !== undefined && hausnummer !== null) {
+        err.hausnummer = 'Ein Kunde muss eine Hausnummer haben.';
+    }
+    if (geschlecht === undefined || geschlecht === null) {
+        err.geschlecht = 'Das Geschlecht des Kundees muss gesetzt sein.';
+    } else if (geschlecht !== 'M' && geschlecht !== 'W') {
+        err.geschlecht = 'Das Geschlecht eines Kundees muss M oder W sein.';
     }
     if (
-        rating !== undefined &&
-        rating !== null &&
-        (rating < 0 || rating > MAX_RATING)
+        plz !== undefined &&
+        plz !== null &&
+        (typeof plz !== 'string' || !isPostalCode(plz, 'DE'))
     ) {
-        err.rating = `${rating} ist keine gueltige Bewertung.`;
-    }
-    if (verlag === undefined || verlag === null || verlag === '') {
-        err.verlag = 'Der Verlag des Kundees muss gesetzt sein.';
-    } else if (verlag !== 'FOO_VERLAG' && verlag !== 'BAR_VERLAG') {
-        err.verlag =
-            'Der Verlag eines Kundees muss FOO_VERLAG oder BAR_VERLAG sein.';
-    }
-    if (
-        isbn !== undefined &&
-        isbn !== null &&
-        (typeof isbn !== 'string' || !isISBN(isbn))
-    ) {
-        err.isbn = 'Keine gueltige ISBN-Nummer.';
+        err.plz = 'Keine gueltige PLZ.';
     }
     // Falls "preis" ein string ist: Pruefung z.B. 12.30
     // if (isPresent(preis) && !isCurrency(`${preis}`)) {
     //     err.preis = `${preis} ist kein gueltiger Preis`
     // }
-    if (
-        homepage !== undefined &&
-        homepage !== null &&
-        (typeof homepage !== 'string' || !isURL(homepage))
-    ) {
-        err.homepage = 'Keine gueltige URL.';
-    }
-
     return Object.entries(err).length === 0 ? undefined : err;
 };

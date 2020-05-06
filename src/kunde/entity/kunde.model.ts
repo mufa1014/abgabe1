@@ -35,26 +35,21 @@ export const kundeSchema = new Schema(
     {
         // MongoDB erstellt implizit einen Index fuer _id
         _id: { type: String },
-        titel: { type: String, required: true, unique: true },
-        rating: { type: Number, min: 0, max: 5 },
-        art: { type: String, enum: ['DRUCKAUSGABE', 'KINDLE'] },
-        verlag: {
+        vorname: { type: String, required: true, unique: false },
+        nachname: { type: String, required: true },
+        kundenart: { type: String, enum: ['Privatkunde', 'Gewerbekunde'] },
+        geschlecht: {
             type: String,
             required: true,
-            enum: ['FOO_VERLAG', 'BAR_VERLAG'],
-            // es gibt auch
-            //  lowercase: true
-            //  uppercase: true
+            enum: ['M', 'W'],
         },
-        preis: { type: Number, required: true },
-        rabatt: Number,
-        lieferbar: Boolean,
-        datum: Date,
-        isbn: { type: String, required: true, unique: true, immutable: true },
-        homepage: String,
-        schlagwoerter: { type: [String], sparse: true },
-        // "anything goes"
-        autoren: [Schema.Types.Mixed],
+        hausnummer: { type: Number, required: true },
+        plz: Number,
+        aktiv: Boolean,
+        registrierungsdatum: Date,
+        strasse: { type: String, required: true, unique: true },
+        zusatzinfo: String,
+        bestellungen: [Schema.Types.Mixed],
     },
     {
         toJSON: { getters: true, virtuals: false },

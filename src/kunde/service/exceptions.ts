@@ -36,7 +36,7 @@ export class ValidationError extends Error {
     }
 }
 
-export class TitelExistsError extends Error {
+export class VornameExistsError extends Error {
     readonly name = 'TitelExistsError';
 
     constructor(public readonly message: string) {
@@ -45,7 +45,7 @@ export class TitelExistsError extends Error {
     }
 }
 
-export class IsbnExistsError extends Error {
+export class PlzExistsError extends Error {
     readonly name = 'IsbnExistsError';
 
     constructor(public readonly message: string) {

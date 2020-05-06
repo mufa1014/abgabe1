@@ -15,32 +15,31 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-export enum Verlag {
-    FOO_VERLAG = 'FOO_VERLAG',
-    BAR_VERLAG = 'BAR_VERLAG',
+export enum Geschlecht {
+    MAN = 'M',
+    WOMEN = 'W',
 }
 
 export enum KundeArt {
-    KINDLE = 'KINDLE',
-    DRUCKAUSGABE = 'DRUCKAUSGABE',
+    PRIVAT = 'Privatkunde',
+    GEWERBLICH = 'Gewerbekunde',
 }
 
 // gemeinsames Basis-Interface fuer REST und GraphQL
 export interface Kunde {
     _id?: string;
     __v?: number;
-    titel: string;
-    rating?: number;
-    art?: KundeArt | '';
-    verlag: Verlag | '';
-    preis: number;
-    rabatt?: number;
-    lieferbar?: boolean;
-    datum?: string | Date;
-    isbn: string;
-    homepage?: string;
-    schlagwoerter?: Array<string>;
-    autoren: any;
+    vorname: string;
+    nachname: string;
+    kundenart?: KundeArt | '';
+    geschlecht: Geschlecht;
+    hausnummer: number;
+    plz: number;
+    aktiv?: boolean;
+    registrierungsdatum?: string | Date;
+    strasse: string;
+    zusatzinfo?: string;
+    bestellungen: any;
 }
 
 export interface KundeData extends Kunde {

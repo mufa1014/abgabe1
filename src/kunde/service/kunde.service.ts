@@ -15,16 +15,15 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
-import {
-    IsbnExistsError,
-    KundeNotExistsError,
-    TitelExistsError,
-    ValidationError,
-    VersionInvalidError,
-} from './exceptions';
 import type { Kunde, KundeData } from '../entity/types';
 import { KundeModel, validateKunde } from '../entity';
+import {
+    KundeNotExistsError,
+    PlzExistsError,
+    ValidationError,
+    VersionInvalidError,
+    VornameExistsError,
+} from './exceptions';
 import { dbConfig, logger } from '../../shared';
 import type { Document } from 'mongoose';
 import JSON5 from 'json5';
@@ -82,26 +81,26 @@ export class KundeService {
         logger.debug(`KundeService.find(): query=${JSON5.stringify(query)}`);
         const tmpQuery = KundeModel.find().lean<KundeData>();
 
-        // alle Kunden asynchron suchen u. aufsteigend nach titel sortieren
+        // alle Kunden asynchron suchen u. aufsteigend nach vorname sortieren
         // nach _id sortieren: Timestamp des INSERTs (Basis: Sek)
         // https://docs.mongodb.org/manual/reference/object-id
         if (query === undefined || Object.entries(query).length === 0) {
             // lean() liefert ein "Plain JavaScript Object" statt ein Mongoose Document
-            return tmpQuery.sort('titel').lean<KundeData>();
+            return tmpQuery.sort('vorname').lean<KundeData>();
         }
 
-        const { titel, javascript, typescript, ...dbQuery } = query;
+        const { vorname, javascript, typescript, ...dbQuery } = query;
 
         // Kunden zur Query (= JSON-Objekt durch Express) asynchron suchen
-        if (titel !== undefined) {
-            // Titel in der Query: Teilstring des Titels,
+        if (vorname !== undefined) {
+            // Vorname in der Query: Teilstring des Vornames,
             // d.h. "LIKE" als regulaerer Ausdruck
             // 'i': keine Unterscheidung zw. Gross- u. Kleinschreibung
             // NICHT /.../, weil das Muster variabel sein muss
             // CAVEAT: KEINE SEHR LANGEN Strings wg. regulaerem Ausdruck
             // eslint-disable-next-line @typescript-eslint/no-magic-numbers
-            if (titel.length < 20) {
-                dbQuery.titel = new RegExp(titel, 'iu'); // eslint-disable-line security/detect-non-literal-regexp
+            if (vorname.length < 20) {
+                dbQuery.vorname = new RegExp(vorname, 'iu'); // eslint-disable-line security/detect-non-literal-regexp
             }
         }
 
@@ -152,23 +151,23 @@ export class KundeService {
         }
 
         // Pattern "Active Record" (urspruengl. von Ruby-on-Rails)
-        const { titel } = kundeData;
-        let tmp = await KundeModel.findOne({ titel }).lean<KundeData>();
+        const { vorname } = kundeData;
+        let tmp = await KundeModel.findOne({ vorname }).lean<KundeData>();
         if (tmp !== null) {
             // Promise<void> als Rueckgabewert
             // Eine von Error abgeleitete Klasse hat die Property "message"
             return Promise.reject(
-                new TitelExistsError(`Der Titel "${titel}" existiert bereits.`),
+                new VornameExistsError(
+                    `Der Vorname "${vorname}" existiert bereits.`,
+                ),
             );
         }
 
-        const { isbn } = kundeData;
-        tmp = await KundeModel.findOne({ isbn }).lean<KundeData>();
+        const { plz } = kundeData;
+        tmp = await KundeModel.findOne({ plz }).lean<KundeData>();
         if (tmp !== null) {
             return Promise.reject(
-                new IsbnExistsError(
-                    `Die ISBN-Nr. "${isbn}" existiert bereits.`,
-                ),
+                new PlzExistsError(`Die PLZ-Nr. "${plz}" existiert bereits.`),
             );
         }
 
@@ -235,12 +234,12 @@ export class KundeService {
             return Promise.reject(new ValidationError(err));
         }
 
-        const { titel }: { titel: string } = kundeData;
-        const tmp = await KundeModel.findOne({ titel }).lean<KundeData>();
+        const { vorname }: { vorname: string } = kundeData;
+        const tmp = await KundeModel.findOne({ vorname }).lean<KundeData>();
         if (tmp !== null && tmp._id !== kunde._id) {
             return Promise.reject(
-                new TitelExistsError(
-                    `Der Titel "${titel}" existiert bereits bei ${
+                new VornameExistsError(
+                    `Der Vorname "${vorname}" existiert bereits bei ${
                         tmp._id as string
                     }.`,
                 ),
